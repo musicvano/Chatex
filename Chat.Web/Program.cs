@@ -1,3 +1,4 @@
+using Chat.Core.Services;
 using Chat.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ namespace Chat.Web
             builder.Services.AddDbContext<Context>(opt =>
                 opt.UseNpgsql(connectionString, x => x.MigrationsAssembly("Chat.Web"))
             );
-
+            builder.Services.AddScoped<ChatService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
