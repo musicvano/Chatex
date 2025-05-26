@@ -1,2 +1,2 @@
-# Chat
+# Chatex
 Web chat (demo project)

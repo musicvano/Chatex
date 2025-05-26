@@ -1,15 +1,16 @@
-﻿using Chat.Data;
+﻿using Chatex.Data;
+using Chatex.Data.Entities;
 
-namespace Chat.Core.Services
+namespace Chatex.Core.Services
 {
-    public class ChatService(Context context)
+    public class ChatService(DataContext context)
     {
-        public List<Data.Entities.Chat> GetAll()
+        public List<Chat> GetAll()
         {
             return context.Chats.ToList();
         }
 
-        public Data.Entities.Chat? Get(Guid id)
+        public Chat? Get(Guid id)
         {
             return context.Chats.Find(id);
         }

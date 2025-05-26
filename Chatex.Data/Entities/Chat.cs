@@ -1,4 +1,4 @@
-﻿namespace Chat.Data.Entities
+﻿namespace Chatex.Data.Entities
 {
     public class Chat
     {

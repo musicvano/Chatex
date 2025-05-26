@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Chat.Data.Entities
+namespace Chatex.Data.Entities
 {
     [PrimaryKey(nameof(ChatId), nameof(UserId))]
     public class ChatUser

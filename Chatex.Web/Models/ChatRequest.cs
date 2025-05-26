@@ -1,4 +1,4 @@
-﻿namespace Chat.Web.Models
+﻿namespace Chatex.Web.Models
 {
     public class ChatRequest
     {

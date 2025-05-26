@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.Web", "Chat.Web\Chat.Web.csproj", "{13F9D985-C815-4933-AEB2-9A8814ADB77E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatex.Web", "Chatex.Web\Chatex.Web.csproj", "{13F9D985-C815-4933-AEB2-9A8814ADB77E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.Data", "Chat.Data\Chat.Data.csproj", "{D1BF4B93-EFAF-4A39-9069-CFD2B5A700B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatex.Data", "Chatex.Data\Chatex.Data.csproj", "{D1BF4B93-EFAF-4A39-9069-CFD2B5A700B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.Core", "Chat.Core\Chat.Core.csproj", "{1E60BFAE-21EE-44E2-B253-737A12CDFB8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chatex.Core", "Chatex.Core\Chatex.Core.csproj", "{1E60BFAE-21EE-44E2-B253-737A12CDFB8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

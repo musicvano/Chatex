@@ -1,14 +1,14 @@
-﻿using Chat.Data;
-using Chat.Data.Entities;
+﻿using Chatex.Data;
+using Chatex.Data.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Chat.Core.Services
+namespace Chatex.Core.Services
 {
-    public class UserService(Context context)
+    public class UserService(DataContext context)
     {
         public User Create(string name, string email, string password)
         {            

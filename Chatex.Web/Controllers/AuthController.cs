@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Chat.Web.Controllers
+namespace Chatex.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

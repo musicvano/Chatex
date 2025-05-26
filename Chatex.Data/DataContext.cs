@@ -1,16 +1,16 @@
-﻿using Chat.Data.Entities;
+﻿using Chatex.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Chat.Data
+namespace Chatex.Data
 {
-    public class Context : DbContext
+    public class DataContext : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<Entities.Chat> Chats { get; set; }
+        public DbSet<Chat> Chats { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<ChatUser> ChatUsers { get; set; }
 
-        public Context(DbContextOptions<Context> options) : base(options) { }
+        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

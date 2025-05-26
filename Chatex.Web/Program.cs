@@ -1,8 +1,8 @@
-using Chat.Core.Services;
-using Chat.Data;
+using Chatex.Core.Services;
+using Chatex.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Chat.Web
+namespace Chatex.Web
 {
     public class Program
     {
@@ -13,8 +13,8 @@ namespace Chat.Web
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("PostgreSQL");
             builder.Services.AddControllers();
-            builder.Services.AddDbContext<Context>(opt =>
-                opt.UseNpgsql(connectionString, x => x.MigrationsAssembly("Chat.Web"))
+            builder.Services.AddDbContext<DataContext>(opt =>
+                opt.UseNpgsql(connectionString, x => x.MigrationsAssembly("Chatex.Web"))
             );
             builder.Services.AddScoped<ChatService>();
             var app = builder.Build();

@@ -1,8 +1,8 @@
-﻿using Chat.Core.Services;
-using Chat.Web.Models;
+﻿using Chatex.Core.Services;
+using Chatex.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Chat.Web.Controllers
+namespace Chatex.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

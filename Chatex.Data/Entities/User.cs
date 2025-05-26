@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Chat.Data.Entities
+namespace Chatex.Data.Entities
 {
     public class User
     {
