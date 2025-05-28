@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Chat@localhost" uuid="64cc1c8c-e9e1-420a-92c5-50dc8be47e6e">
+    <data-source source="LOCAL" name="Chatex@localhost" uuid="487bfeae-685c-43c9-92f0-8b0422698bf8">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <remarks>Web Chat</remarks>
+      <remarks>Web app database</remarks>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/Chat</jdbc-url>
+      <jdbc-url>jdbc:postgresql://localhost:5432/Chatex</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

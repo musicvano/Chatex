@@ -16,7 +16,9 @@ namespace Chatex.Web
             builder.Services.AddDbContext<DataContext>(opt =>
                 opt.UseNpgsql(connectionString, x => x.MigrationsAssembly("Chatex.Web"))
             );
+            builder.Services.AddScoped<JwtService>();
             builder.Services.AddScoped<ChatService>();
+            builder.Services.AddScoped<UserService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

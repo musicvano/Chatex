@@ -1,5 +1,6 @@
 ﻿using Chatex.Data;
 using Chatex.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace Chatex.Core.Services
 {
     public class UserService(DataContext context)
     {
+        private readonly PasswordHasher<string> hasher = new();
+
         public User Create(string name, string email, string password)
         {            
             email = email.Trim().ToLower();
@@ -21,12 +24,21 @@ namespace Chatex.Core.Services
                 Id = Guid.CreateVersion7(),
                 Name = name,
                 Email = email,
-                PasswordHash = "",
+                PasswordHash = hasher.HashPassword(email, password),
                 Created = DateTime.UtcNow
             };
             context.Users.Add(user);
             context.SaveChanges();
             return user;
+        }
+
+        public User? ValidateCredentials(string email, string password)
+        {
+            var user = context.Users.FirstOrDefault(u => u.Email == email);            
+            if (user == null)
+                return null;
+            var res = hasher.VerifyHashedPassword(user.Email, user.PasswordHash, password);
+            return res == PasswordVerificationResult.Success ? user : null;
         }
     }
 }
