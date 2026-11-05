@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chatex.Business\Chatex.Business.csproj" />
+  </ItemGroup>
+
+</Project>

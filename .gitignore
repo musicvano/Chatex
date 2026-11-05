@@ -10,6 +10,7 @@ appsettings.*.local.json
 *.pfx
 *.key
 .claude/settings.local.json
+.claude/
 
 # --- Local data ---
 .uploads/
@@ -54,3 +55,4 @@ playwright/.cache/
 Thumbs.db
 desktop.ini
 .DS_Store
+BACKLOG.md
