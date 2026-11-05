@@ -1,0 +1,5 @@
+root = true
+
+# All files
+[*]
+end_of_line = lf

@@ -1,0 +1,56 @@
+# Chatex: repository-wide ignores.
+# .NET build output is covered in detail by backend/.gitignore.
+
+# --- Secrets and local configuration ---
+.env
+.env.*
+!.env.example
+*.env
+appsettings.*.local.json
+*.pfx
+*.key
+.claude/settings.local.json
+
+# --- Local data ---
+.uploads/
+*.dump
+
+# --- .NET (fallback for anything outside backend/) ---
+bin/
+obj/
+TestResults/
+*.user
+coverage/
+coveragereport/
+
+# --- Node / Angular (frontend/) ---
+node_modules/
+dist/
+.angular/
+out-tsc/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+
+# --- Playwright (e2e/) ---
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# --- Editors and IDEs ---
+.vs/
+.idea/
+*.sln.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+*.swp
+
+# --- Operating systems ---
+Thumbs.db
+desktop.ini
+.DS_Store
