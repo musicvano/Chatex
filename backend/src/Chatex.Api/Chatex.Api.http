@@ -1,0 +1,82 @@
+### Sample requests for the Chatex API.
+### Run the API with `dotnet run --project backend/src/Chatex.Api --launch-profile http`,
+### then send "Register" (or "Login"); later requests reuse its access token.
+
+@host = http://localhost:5214
+
+### Register
+# @name register
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "userName": "alice",
+  "email": "alice@example.test",
+  "password": "Passw0rd!",
+  "displayName": "Alice"
+}
+
+### Login (user name or email)
+# @name login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "login": "alice",
+  "password": "Passw0rd!"
+}
+
+### Refresh (uses the chatex_refresh cookie set by register/login)
+POST {{host}}/api/auth/refresh
+
+### My profile
+GET {{host}}/api/me
+Authorization: Bearer {{register.response.body.accessToken}}
+
+### Search users
+GET {{host}}/api/users?query=al
+Authorization: Bearer {{register.response.body.accessToken}}
+
+### Create a group
+# @name group
+POST {{host}}/api/chats
+Authorization: Bearer {{register.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "type": "group",
+  "title": "Team",
+  "description": "Our first group"
+}
+
+### My chats
+GET {{host}}/api/chats
+Authorization: Bearer {{register.response.body.accessToken}}
+
+### Send a message
+POST {{host}}/api/chats/{{group.response.body.id}}/messages
+Authorization: Bearer {{register.response.body.accessToken}}
+Content-Type: application/json
+
+{
+  "body": "Hello, team!"
+}
+
+### History (newest first; pass nextCursor as ?before= for older pages)
+GET {{host}}/api/chats/{{group.response.body.id}}/messages?limit=20
+Authorization: Bearer {{register.response.body.accessToken}}
+
+### Upload an attachment (then send its id in attachmentIds)
+POST {{host}}/api/attachments
+Authorization: Bearer {{register.response.body.accessToken}}
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="notes.txt"
+Content-Type: text/plain
+
+Some notes.
+--boundary--
+
+### Logout (ends the cookie's session)
+POST {{host}}/api/auth/logout

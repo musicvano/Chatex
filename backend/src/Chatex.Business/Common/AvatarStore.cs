@@ -2,10 +2,16 @@ using Chatex.DataAccess.Abstractions;
 
 namespace Chatex.Business.Common;
 
+/// <summary>Limits for avatar images, public so the Api can cap request bodies to match.</summary>
+public static class AvatarLimits
+{
+    public const long MaxBytes = 5 * 1024 * 1024;
+}
+
 /// <summary>Validates and stores avatar images for users and chats.</summary>
 internal sealed class AvatarStore(IFileStorage storage)
 {
-    public const long MaxBytes = 5 * 1024 * 1024;
+    public const long MaxBytes = AvatarLimits.MaxBytes;
 
     private static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
     {

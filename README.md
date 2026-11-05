@@ -2,7 +2,7 @@
 
 A web messenger with direct chats, groups and channels, built on ASP.NET Core and PostgreSQL. Realtime updates (SignalR) and the Angular frontend are planned next.
 
-> **Status:** the backend data access and business layers are done and tested. HTTP endpoints, the SignalR hub and the frontend are not built yet. See [BACKLOG.md](BACKLOG.md) for the full tooling plan.
+> **Status:** the backend (data access, business layer and HTTP API) is done and tested. The SignalR hub and the frontend are not built yet. See [BACKLOG.md](BACKLOG.md) for the full tooling plan.
 
 ## Features
 
@@ -23,9 +23,10 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core an
 |---|---|
 | Runtime | .NET 10 (C# 14) |
 | Database | PostgreSQL 18, EF Core 10 with Npgsql, snake_case naming |
-| Auth | ASP.NET Core Identity, JWT (HMAC-SHA256) |
+| Api | Minimal APIs, ProblemDetails (RFC 9457), OpenAPI with Scalar |
+| Auth | ASP.NET Core Identity, JWT bearer (HMAC-SHA256), refresh token in an HttpOnly cookie |
 | Validation | FluentValidation |
-| Tests | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn |
+| Tests | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn, WebApplicationFactory |
 | Planned | SignalR, Angular 22 + Tailwind CSS v4, Playwright, GitHub Actions, Nginx + systemd on Ubuntu |
 
 ## Architecture
@@ -33,7 +34,7 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core an
 The backend has three layers. Each one only references the layer below it.
 
 ```
-Chatex.Api          Presentation: HTTP endpoints, SignalR hub (to come)
+Chatex.Api          Presentation: HTTP endpoints, auth, problem details, SignalR hub (to come)
    │
 Chatex.Business     Business logic: services, rules and permissions, validation, DTOs
    │
@@ -54,13 +55,14 @@ backend/
   Directory.Build.props           shared build settings (nullable, warnings as errors)
   Directory.Packages.props        central NuGet versions
   src/
-    Chatex.Api/                   web host (currently only /health)
+    Chatex.Api/                   web host: Endpoints, Infrastructure (auth, errors, files), Contracts
     Chatex.Business/              Auth, Users, Chats, Messages, Attachments, Common
     Chatex.DataAccess/            Entities, Configurations, Repositories, Migrations, Storage
   tests/
     Chatex.Testing/               shared PostgreSQL container fixture
     Chatex.DataAccess.Tests/      repository and storage tests
     Chatex.Business.Tests/        service tests through the full DI graph
+    Chatex.Api.Tests/             HTTP tests against the real app (WebApplicationFactory)
 BACKLOG.md                        tooling and deployment plan
 LICENSE                           MIT license
 ```
@@ -109,7 +111,25 @@ dotnet ef database update --project src/Chatex.DataAccess
 dotnet run --project backend/src/Chatex.Api --launch-profile http
 ```
 
-Then open http://localhost:5214/health.
+Then open http://localhost:5214/scalar for the interactive API reference (Development only; the raw document is at `/openapi/v1.json`). [`Chatex.Api.http`](backend/src/Chatex.Api/Chatex.Api.http) has sample requests for Rider, Visual Studio or VS Code.
+
+## HTTP API
+
+All endpoints live under `/api` and need an access token (`Authorization: Bearer <token>`), except register, login, refresh and logout.
+
+| Area | Routes |
+|---|---|
+| Auth | `POST /api/auth/register`, `/login`, `/refresh`, `/logout`, `/logout-all` |
+| Profile | `GET`/`PUT /api/me`, `PUT /api/me/password`, `PUT`/`DELETE /api/me/avatar` |
+| Users | `GET /api/users?query=`, `GET /api/users/{id}`, `GET /api/users/{id}/avatar` |
+| Chats | `GET`/`POST /api/chats`, `POST /api/chats/direct`, `GET /api/chats/search?query=`, `GET`/`PUT`/`DELETE /api/chats/{id}`, avatar, `join`, `leave`, `members`, `members/{userId}/role`, `mute`, `read` |
+| Messages | `GET`/`POST /api/chats/{id}/messages?before=&after=&limit=`, `PUT`/`DELETE /api/messages/{id}` |
+| Attachments | `POST /api/attachments` (multipart, field `file`), `GET /api/attachments/{id}` |
+
+- **Tokens.** Login, register and refresh return the access token in the body and set the refresh token as the `chatex_refresh` cookie (`HttpOnly`, `Secure`, `SameSite=Strict`, path `/api/auth`). Scripts never see it; the browser sends it only to `/api/auth/refresh` and `/api/auth/logout`.
+- **Errors** are `application/problem+json`. The `code` field is a stable machine-readable code (for example `chat_not_found`, `not_a_member`); validation errors also have `errors` keyed by field. Status codes: validation 400, unauthorized 401, forbidden 403, not found 404, conflict 409.
+- **Enums** are camelCase strings (`"group"`, `"admin"`). **Cursors** are opaque strings: pass `nextCursor` back as `cursor` or `before`.
+- **Files.** Avatars and attachments need the access token too, so the frontend loads them with `HttpClient` as blobs instead of plain `<img src>` URLs.
 
 ### Run the tests
 
@@ -135,7 +155,7 @@ dotnet ef migrations has-pending-model-changes --project backend/src/Chatex.Data
 
 ## Roadmap
 
-1. Api: Minimal API endpoints, JWT authentication, ProblemDetails mapping for `Result` errors, OpenAPI with Scalar.
+1. ~~Api: Minimal API endpoints, JWT authentication, ProblemDetails mapping for `Result` errors, OpenAPI with Scalar.~~ Done.
 2. SignalR hub: presence, typing indicators, an `IChatNotifier` implementation.
 3. Angular frontend.
 4. Playwright end-to-end tests.
