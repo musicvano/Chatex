@@ -5,7 +5,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chatex.Api.Contracts;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
 
 // Tests share one database that is wiped before each test; xunit.runner.json turns off parallel runs.
 [assembly: AssemblyFixture(typeof(PostgresFixture))]
@@ -30,6 +33,7 @@ public abstract class ApiTestBase(PostgresFixture fixture) : IAsyncLifetime
     protected static readonly byte[] PngBytes = [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0, 0, 0, 13, 1, 2, 3, 4];
 
     private readonly string _storageRoot = Path.Combine(Path.GetTempPath(), "chatex-api-tests", Guid.NewGuid().ToString("N"));
+    private readonly List<HubClient> _hubs = [];
     private WebApplicationFactory<Program> _factory = null!;
 
     protected static CancellationToken Ct => TestContext.Current.CancellationToken;
@@ -44,11 +48,18 @@ public abstract class ApiTestBase(PostgresFixture fixture) : IAsyncLifetime
             .UseSetting("Jwt:Audience", "chatex-api-tests")
             .UseSetting("Jwt:SigningKey", "api-test-signing-key-that-is-long-enough-for-hmac")
             .UseSetting("Storage:RootPath", _storageRoot)
-            .UseSetting("Attachments:MaxBytes", MaxAttachmentBytes.ToString()));
+            .UseSetting("Attachments:MaxBytes", MaxAttachmentBytes.ToString())
+            .UseSetting("Presence:OfflineGraceSeconds", "0"));
     }
 
     public async ValueTask DisposeAsync()
     {
+        // Close hub connections while the server is still up.
+        foreach (var hub in _hubs)
+        {
+            await hub.DisposeAsync();
+        }
+
         await _factory.DisposeAsync();
         if (Directory.Exists(_storageRoot))
         {
@@ -71,6 +82,33 @@ public abstract class ApiTestBase(PostgresFixture fixture) : IAsyncLifetime
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", auth.AccessToken);
         return new Session(client, auth);
     }
+
+    /// <summary>
+    /// Opens a hub connection as <paramref name="session"/> (or anonymously) through the in-memory server.
+    /// Returns once the server has joined the user's chat groups.
+    /// </summary>
+    protected async Task<HubClient> ConnectHubAsync(Session? session)
+    {
+        var hub = new HubClient(CreateHubConnection(session?.Auth.AccessToken));
+        _hubs.Add(hub);
+        await hub.Connection.StartAsync(Ct);
+
+        // The handshake completes before OnConnectedAsync, but invocations wait for it, so this one marks the point
+        // where the connection is in its groups.
+        await hub.Connection.InvokeAsync<Guid[]>("GetOnlineUsers", Array.Empty<Guid>(), Ct);
+        return hub;
+    }
+
+    protected HubConnection CreateHubConnection(string? accessToken) =>
+        new HubConnectionBuilder()
+            .WithUrl(new Uri("https://localhost/hubs/chat"), o =>
+            {
+                o.HttpMessageHandlerFactory = _ => _factory.Server.CreateHandler();
+                o.Transports = HttpTransportType.LongPolling;
+                o.AccessTokenProvider = () => Task.FromResult(accessToken);
+            })
+            .AddJsonProtocol(o => o.PayloadSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)))
+            .Build();
 
     protected static object RegisterBody(string userName) => new
     {

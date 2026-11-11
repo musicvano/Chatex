@@ -26,8 +26,11 @@ public interface IProfileService
 
     Task<Result<UserSummaryDto[]>> SearchUsersAsync(string query, int? limit, CancellationToken cancellationToken = default);
 
-    /// <summary>Records when the user was last online; the SignalR hub calls it when the last connection closes.</summary>
-    Task TouchLastSeenAsync(Guid userId, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Records that the user is online now and returns the stored time. The SignalR hub calls it on the first
+    /// connection and when the user goes offline.
+    /// </summary>
+    Task<DateTimeOffset> TouchLastSeenAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
 internal sealed class ProfileService(
@@ -156,6 +159,10 @@ internal sealed class ProfileService(
         return found.Select(u => u.ToSummaryDto()).ToArray();
     }
 
-    public Task TouchLastSeenAsync(Guid userId, CancellationToken cancellationToken = default) =>
-        users.UpdateLastSeenAsync(userId, timeProvider.GetUtcNow(), cancellationToken);
+    public async Task<DateTimeOffset> TouchLastSeenAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var now = timeProvider.GetUtcNow();
+        await users.UpdateLastSeenAsync(userId, now, cancellationToken);
+        return now;
+    }
 }

@@ -1,12 +1,14 @@
 using Chatex.Api;
 using Chatex.Api.Endpoints;
+using Chatex.Api.Hubs;
 using Chatex.Business;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddBusiness(builder.Configuration);
+// AddApi first: its SignalR IChatNotifier must be registered before AddBusiness falls back to the no-op one.
 builder.Services.AddApi();
+builder.Services.AddBusiness(builder.Configuration);
 
 var app = builder.Build();
 
@@ -32,6 +34,8 @@ api.MapUserEndpoints();
 api.MapChatEndpoints();
 api.MapMessageEndpoints();
 api.MapAttachmentEndpoints();
+
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();
 

@@ -59,6 +59,11 @@ public interface IChatService
 
     /// <summary>Moves the caller's read position forward to <paramref name="messageId"/>; never backwards.</summary>
     Task<Result> MarkReadAsync(Guid userId, Guid chatId, Guid messageId, CancellationToken cancellationToken = default);
+
+    /// <summary>Ids of all the user's chats; the SignalR hub joins their groups on connect.</summary>
+    Task<IReadOnlyList<Guid>> GetMyChatIdsAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task<bool> IsMemberAsync(Guid chatId, Guid userId, CancellationToken cancellationToken = default);
 }
 
 internal sealed class ChatService(
@@ -527,6 +532,12 @@ internal sealed class ChatService(
 
         return Result.Success;
     }
+
+    public Task<IReadOnlyList<Guid>> GetMyChatIdsAsync(Guid userId, CancellationToken cancellationToken = default) =>
+        members.GetChatIdsForUserAsync(userId, cancellationToken);
+
+    public Task<bool> IsMemberAsync(Guid chatId, Guid userId, CancellationToken cancellationToken = default) =>
+        members.IsMemberAsync(chatId, userId, cancellationToken);
 
     /// <summary>The caller's membership, failing with NotAllowed (or NotForDirectChats) when <paramref name="allowed"/> says no.</summary>
     private async Task<Result<(Chat Chat, ChatMember Member)>> RequireAsync(

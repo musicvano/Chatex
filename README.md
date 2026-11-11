@@ -1,8 +1,8 @@
 # Chatex
 
-A web messenger with direct chats, groups and channels, built on ASP.NET Core and PostgreSQL. Realtime updates (SignalR) and the Angular frontend are planned next.
+A web messenger with direct chats, groups and channels, built on ASP.NET Core, SignalR and PostgreSQL. The Angular frontend is planned next.
 
-> **Status:** the backend (data access, business layer and HTTP API) is done and tested. The SignalR hub and the frontend are not built yet. See [BACKLOG.md](BACKLOG.md) for the full tooling plan.
+> **Status:** the backend (data access, business layer, HTTP API and SignalR hub) is done and tested. The frontend is not built yet. See [BACKLOG.md](BACKLOG.md) for the full tooling plan.
 
 ## Features
 
@@ -16,6 +16,7 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core an
   - Roles: owner, admin, member, subscriber. Ownership can be transferred.
 - **Messages**: send, reply, edit, delete, read receipts, unread counts, history with cursor (keyset) pagination.
 - **Attachments**: uploads with a size limit and a content-type allow-list, downloads for chat members only, cleanup of uploads that were never sent.
+- **Realtime** over SignalR: new, edited and deleted messages, read receipts, membership and chat changes, typing indicators, online presence with last seen.
 
 ## Tech stack
 
@@ -24,17 +25,18 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core an
 | Runtime | .NET 10 (C# 14) |
 | Database | PostgreSQL 18, EF Core 10 with Npgsql, snake_case naming |
 | Api | Minimal APIs, ProblemDetails (RFC 9457), OpenAPI with Scalar |
+| Realtime | ASP.NET Core SignalR, in-memory presence (one process, no backplane) |
 | Auth | ASP.NET Core Identity, JWT bearer (HMAC-SHA256), refresh token in an HttpOnly cookie |
 | Validation | FluentValidation |
 | Tests | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn, WebApplicationFactory |
-| Planned | SignalR, Angular 22 + Tailwind CSS v4, Playwright, GitHub Actions, Nginx + systemd on Ubuntu |
+| Planned | Angular 22 + Tailwind CSS v4, Playwright, GitHub Actions, Nginx + systemd on Ubuntu |
 
 ## Architecture
 
 The backend has three layers. Each one only references the layer below it.
 
 ```
-Chatex.Api          Presentation: HTTP endpoints, auth, problem details, SignalR hub (to come)
+Chatex.Api          Presentation: HTTP endpoints, auth, problem details, SignalR hub
    │
 Chatex.Business     Business logic: services, rules and permissions, validation, DTOs
    │
@@ -44,7 +46,7 @@ Chatex.DataAccess   Data access: EF Core entities, repositories, unit of work, m
 - Services return `Result<T>` for expected failures (`Validation`, `NotFound`, `Forbidden`, `Conflict`, `Unauthorized`) and throw only on bugs.
 - The business layer never touches `DbContext`. It goes through repository interfaces and `IUnitOfWork`.
 - Message ids are UUIDv7, so they sort by time and double as pagination cursors. Cursors given to clients are opaque strings.
-- Realtime events go through `IChatNotifier`. It does nothing until the Api provides a SignalR version.
+- Services raise realtime events through `IChatNotifier` after each commit. The Api implements it with SignalR; without the Api (for example in the business tests) a no-op version is used.
 
 ## Repository layout
 
@@ -55,7 +57,7 @@ backend/
   Directory.Build.props           shared build settings (nullable, warnings as errors)
   Directory.Packages.props        central NuGet versions
   src/
-    Chatex.Api/                   web host: Endpoints, Infrastructure (auth, errors, files), Contracts
+    Chatex.Api/                   web host: Endpoints, Hubs (SignalR, presence), Infrastructure (auth, errors, files), Contracts
     Chatex.Business/              Auth, Users, Chats, Messages, Attachments, Common
     Chatex.DataAccess/            Entities, Configurations, Repositories, Migrations, Storage
   tests/
@@ -90,6 +92,7 @@ Development settings are in `backend/src/Chatex.Api/appsettings.Development.json
 | `Jwt:Issuer`, `Jwt:Audience`, `Jwt:SigningKey` | token settings; the key must be at least 32 characters |
 | `Storage:RootPath` | folder for uploaded files (default `backend/.uploads`, git-ignored) |
 | `Attachments:MaxBytes` | optional upload limit (default 20 MB) |
+| `Presence:OfflineGraceSeconds` | optional delay before a disconnected user is reported offline (default 5) |
 
 The dev signing key in that file is for local use only. In production, settings come from environment variables (for example `Jwt__SigningKey`).
 
@@ -131,12 +134,44 @@ All endpoints live under `/api` and need an access token (`Authorization: Bearer
 - **Enums** are camelCase strings (`"group"`, `"admin"`). **Cursors** are opaque strings: pass `nextCursor` back as `cursor` or `before`.
 - **Files.** Avatars and attachments need the access token too, so the frontend loads them with `HttpClient` as blobs instead of plain `<img src>` URLs.
 
+## Realtime (SignalR)
+
+The hub lives at `/hubs/chat` and needs the same access token as the API. Browsers cannot send headers on WebSocket and Server-Sent Events requests, so the token may also come as the `access_token` query parameter, which the server accepts only on `/hubs` paths. Payloads are JSON with camelCase names and camelCase enum strings, the same as the HTTP API.
+
+On connect the server adds the connection to one group per chat of the user (`chat:{chatId}`), so chat events reach current members only. Members added later join the group on their open connections right away; removed members get `MemberRemoved` and then nothing more from that chat.
+
+| Server to client | Arguments | When |
+|---|---|---|
+| `MessageCreated` | `message` | a message was sent |
+| `MessageUpdated` | `message` | a message was edited |
+| `MessageDeleted` | `chatId, messageId` | a message was deleted |
+| `MessagesRead` | `chatId, userId, lastReadMessageId` | a member's read position moved forward (not for channels) |
+| `MembersAdded` | `chatId, userIds[]` | users joined or were added, including everyone in a new chat |
+| `MemberRemoved` | `chatId, userId` | a user left or was removed |
+| `ChatUpdated` | `chatId` | title, description, handle, avatar or roles changed; refetch the chat |
+| `ChatDeleted` | `chatId` | the owner deleted the chat |
+| `Typing` | `chatId, userId` | another member is typing; expire the indicator after about 5 s |
+| `UserOnline` | `userId` | a user who shares a chat with you opened their first connection |
+| `UserOffline` | `userId, lastSeenAt` | that user's last connection closed and they did not return within the grace period |
+
+| Client to server | Returns | Notes |
+|---|---|---|
+| `Typing(chatId)` | nothing | throttle to one call every 3 s; fails with a `HubException` if you are not a member |
+| `GetOnlineUsers(userIds[])` | `userIds[]` | which of the given users are online now |
+
+- **Presence** is kept in memory: a user is online while they have at least one connection (tabs and devices count separately). When the last one closes, the server waits `Presence:OfflineGraceSeconds` so a page reload does not flicker, then saves `lastSeenAt` and sends `UserOffline`.
+- **Reconnects.** The handshake finishes before the server has joined the groups. After connecting or reconnecting, fetch what you missed with `GET /api/chats/{id}/messages?after=` rather than relying on events alone.
+
 ### Run the tests
 
-Docker must be running. The tests start a disposable PostgreSQL container, apply the real migrations and wipe the data before each test.
+Docker must be running. The tests start a disposable PostgreSQL container, apply the real migrations and wipe the data before each test. Run them from `backend/`, where `global.json` selects the Microsoft Testing Platform runner:
 
 ```bash
-dotnet test --solution backend/Chatex.slnx
+cd backend
+```
+
+```bash
+dotnet test --solution Chatex.slnx
 ```
 
 ## Working on the schema
@@ -156,7 +191,7 @@ dotnet ef migrations has-pending-model-changes --project backend/src/Chatex.Data
 ## Roadmap
 
 1. ~~Api: Minimal API endpoints, JWT authentication, ProblemDetails mapping for `Result` errors, OpenAPI with Scalar.~~ Done.
-2. SignalR hub: presence, typing indicators, an `IChatNotifier` implementation.
+2. ~~SignalR hub: presence, typing indicators, an `IChatNotifier` implementation.~~ Done.
 3. Angular frontend.
 4. Playwright end-to-end tests.
 5. CI/CD with GitHub Actions, deployment to a DigitalOcean droplet.
