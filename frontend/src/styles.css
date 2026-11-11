@@ -1,0 +1,145 @@
+@import 'tailwindcss';
+
+/* Dark mode is class based so the user can override the OS setting (see ThemeService). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans:
+    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+
+  --color-brand-50: oklch(96.2% 0.018 272.314);
+  --color-brand-100: oklch(93% 0.034 272.788);
+  --color-brand-200: oklch(87% 0.065 274.039);
+  --color-brand-300: oklch(78.5% 0.115 274.713);
+  --color-brand-400: oklch(67.3% 0.182 276.935);
+  --color-brand-500: oklch(58.5% 0.233 277.117);
+  --color-brand-600: oklch(51.1% 0.262 276.966);
+  --color-brand-700: oklch(45.7% 0.24 277.023);
+  --color-brand-800: oklch(39.8% 0.195 277.366);
+  --color-brand-900: oklch(35.9% 0.144 278.697);
+  --color-brand-950: oklch(25.7% 0.09 281.288);
+}
+
+/* Semantic surface tokens that switch with the theme: bg-canvas, bg-surface, bg-subtle, border-line, text-fg, text-muted. */
+@theme inline {
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-subtle: var(--c-subtle);
+  --color-line: var(--c-line);
+  --color-fg: var(--c-fg);
+  --color-muted: var(--c-muted);
+  --color-bubble: var(--c-bubble);
+}
+
+:root {
+  color-scheme: light;
+  --c-canvas: oklch(96.7% 0.001 286.375);
+  --c-surface: oklch(100% 0 0);
+  --c-subtle: oklch(96.7% 0.001 286.375);
+  --c-line: oklch(92% 0.004 286.32);
+  --c-fg: oklch(21% 0.006 285.885);
+  --c-muted: oklch(55.2% 0.016 285.938);
+  --c-bubble: oklch(100% 0 0);
+}
+
+.dark {
+  color-scheme: dark;
+  --c-canvas: oklch(14.1% 0.005 285.823);
+  --c-surface: oklch(21% 0.006 285.885);
+  --c-subtle: oklch(27.4% 0.006 286.033);
+  --c-line: oklch(27.4% 0.006 286.033);
+  --c-fg: oklch(96.7% 0.001 286.375);
+  --c-muted: oklch(70.5% 0.015 286.067);
+  --c-bubble: oklch(27.4% 0.006 286.033);
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-canvas text-fg antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility btn {
+  @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium transition-colors select-none disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800;
+}
+@utility btn-secondary {
+  @apply btn border border-line bg-surface text-fg hover:bg-subtle;
+}
+@utility btn-ghost {
+  @apply btn text-fg hover:bg-subtle;
+}
+@utility btn-danger {
+  @apply btn bg-red-600 text-white hover:bg-red-700;
+}
+@utility icon-btn {
+  @apply inline-flex size-10 shrink-0 items-center justify-center rounded-full text-muted transition-colors hover:bg-subtle hover:text-fg disabled:opacity-40;
+}
+@utility input {
+  /* 16px text on phones stops iOS Safari from zooming into focused fields. */
+  @apply block w-full rounded-lg border border-line bg-surface px-3 py-2 text-base text-fg placeholder:text-muted focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 focus:outline-none sm:text-sm;
+}
+@utility input-invalid {
+  @apply border-red-500 focus:border-red-500 focus:ring-red-500/30;
+}
+@utility label {
+  @apply mb-1 block text-sm font-medium text-fg;
+}
+@utility field-error {
+  @apply mt-1 text-xs text-red-600 dark:text-red-400;
+}
+@utility card {
+  @apply rounded-2xl border border-line bg-surface;
+}
+@utility badge {
+  @apply inline-flex min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] leading-5 font-semibold;
+}
+@utility menu {
+  @apply min-w-44 overflow-hidden rounded-xl border border-line bg-surface py-1 shadow-lg;
+}
+@utility menu-item {
+  @apply flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-fg hover:bg-subtle focus:bg-subtle focus:outline-none;
+}
+
+.cdk-overlay-dark-backdrop {
+  background: rgb(0 0 0 / 0.45);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility dialog-card {
+  @apply max-h-[calc(100dvh-2rem)] w-[min(32rem,calc(100vw-1.5rem))] overflow-y-auto rounded-2xl border border-line bg-surface text-fg shadow-xl;
+}
+
+/* CDK dialog panes: let the card decide its width. */
+.app-dialog-panel {
+  max-width: 100vw;
+}

@@ -1,8 +1,8 @@
 # Chatex
 
-A web messenger with direct chats, groups and channels, built on ASP.NET Core, SignalR and PostgreSQL. The Angular frontend is planned next.
+A web messenger with direct chats, groups and channels, built on ASP.NET Core, SignalR and PostgreSQL, with an Angular and Tailwind CSS frontend that works on phones, tablets and desktops.
 
-> **Status:** the backend (data access, business layer, HTTP API and SignalR hub) is done and tested. The frontend is not built yet. See [BACKLOG.md](BACKLOG.md) for the full tooling plan.
+> **Status:** the backend (data access, business layer, HTTP API and SignalR hub) and the web frontend are done and tested. Playwright end-to-end tests and CI/CD come next. See [BACKLOG.md](BACKLOG.md) for the full tooling plan.
 
 ## Features
 
@@ -29,7 +29,8 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core, S
 | Auth | ASP.NET Core Identity, JWT bearer (HMAC-SHA256), refresh token in an HttpOnly cookie |
 | Validation | FluentValidation |
 | Tests | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn, WebApplicationFactory |
-| Planned | Angular 22 + Tailwind CSS v4, Playwright, GitHub Actions, Nginx + systemd on Ubuntu |
+| Frontend | Angular 22 (standalone, signals, zoneless), Tailwind CSS v4, Angular CDK, `@microsoft/signalr`, Lucide icons, Vitest |
+| Planned | Playwright, GitHub Actions, Nginx + systemd on Ubuntu |
 
 ## Architecture
 
@@ -65,6 +66,7 @@ backend/
     Chatex.DataAccess.Tests/      repository and storage tests
     Chatex.Business.Tests/        service tests through the full DI graph
     Chatex.Api.Tests/             HTTP tests against the real app (WebApplicationFactory)
+frontend/                         Angular app (see "Frontend" below)
 BACKLOG.md                        tooling and deployment plan
 LICENSE                           MIT license
 ```
@@ -76,6 +78,7 @@ LICENSE                           MIT license
 - [.NET SDK 10.0.403](https://dotnet.microsoft.com/download) or later in the 10.0 line
 - PostgreSQL 18 (local install or Docker)
 - Docker Desktop, for the tests
+- Node.js 24 or later with npm, for the frontend
 - The EF Core CLI:
 
 ```bash
@@ -174,6 +177,58 @@ cd backend
 dotnet test --solution Chatex.slnx
 ```
 
+## Frontend
+
+The web app in `frontend/` is an Angular 22 workspace styled with Tailwind CSS v4. It covers the whole API: sign-in and registration, the chat list, messaging with history paging, replies, edits, deletes and attachments, groups and channels with members and roles, public chat discovery, profile, password and theme settings.
+
+- **Layouts.** Phones show one pane at a time with a bottom tab bar; tablets add a nav rail and keep the chat list beside the conversation; desktops also dock the chat info panel. Light, dark and system themes.
+- **Session.** The access token lives only in memory. On startup the app calls `/api/auth/refresh` (the HttpOnly cookie restores the session), refreshes about a minute before expiry, and retries a request once after a 401. Refreshes are single-flight because the server revokes every session when an old refresh token is reused.
+- **Realtime.** One SignalR connection per signed-in tab. Events update the chat list, unread counts, open conversation, typing and presence; after a reconnect the app refetches the chat list and fills the gap with `?after=`.
+- **Files.** Avatars and attachments are fetched with `HttpClient` as blobs, because they need the bearer token.
+
+```
+frontend/src/app/
+  core/      api (HttpClient wrappers, DTOs, problem details), auth (service, interceptor, guards),
+             realtime (SignalR, presence, typing), media (blob URLs), ui (theme, toasts)
+  state/     chats.store, messages.store (signal-based)
+  shared/ui/ avatar, dialogs, user search, pipes, icons
+  features/  auth, shell, chat-list, conversation, chat-info, new-chat, discover, settings, user-profile
+```
+
+### Run the frontend
+
+Start the API first (see above). The dev server proxies `/api` and `/hubs` to `http://localhost:5214` (`frontend/proxy.conf.json`), so the refresh cookie stays same-origin.
+
+```bash
+cd frontend
+```
+
+```bash
+npm install
+```
+
+```bash
+npm start
+```
+
+Then open http://localhost:4200.
+
+### Check the frontend
+
+```bash
+npm run lint
+```
+
+```bash
+npm test -- --watch=false
+```
+
+```bash
+npm run build
+```
+
+The production build lands in `frontend/dist/chatex/browser`; serve it with an SPA fallback to `index.html` and proxy `/api` and `/hubs` (with WebSocket upgrade) to the API.
+
 ## Working on the schema
 
 After changing an entity or a configuration in `Chatex.DataAccess`, add a migration:
@@ -192,7 +247,7 @@ dotnet ef migrations has-pending-model-changes --project backend/src/Chatex.Data
 
 1. ~~Api: Minimal API endpoints, JWT authentication, ProblemDetails mapping for `Result` errors, OpenAPI with Scalar.~~ Done.
 2. ~~SignalR hub: presence, typing indicators, an `IChatNotifier` implementation.~~ Done.
-3. Angular frontend.
+3. ~~Angular frontend: responsive layouts, every API feature, realtime updates.~~ Done.
 4. Playwright end-to-end tests.
 5. CI/CD with GitHub Actions, deployment to a DigitalOcean droplet.
 
