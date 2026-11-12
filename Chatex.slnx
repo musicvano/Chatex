@@ -1,0 +1,11 @@
+<Solution>
+  <Project Path="Chatex.Api/Chatex.Api.csproj" />
+  <Project Path="Chatex.Business/Chatex.Business.csproj" />
+  <Project Path="Chatex.DataAccess/Chatex.DataAccess.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="Tests/Chatex.Api.Tests/Chatex.Api.Tests.csproj" />
+    <Project Path="Tests/Chatex.Business.Tests/Chatex.Business.Tests.csproj" />
+    <Project Path="Tests/Chatex.DataAccess.Tests/Chatex.DataAccess.Tests.csproj" />
+    <Project Path="Tests/Chatex.Testing/Chatex.Testing.csproj" />
+  </Folder>
+</Solution>

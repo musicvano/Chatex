@@ -1,5 +1,5 @@
 ### Sample requests for the Chatex API.
-### Run the API with `dotnet run --project backend/src/Chatex.Api --launch-profile http`,
+### Run the API with `dotnet run --project Chatex.Api --launch-profile http`,
 ### then send "Register" (or "Login"); later requests reuse its access token.
 
 @host = http://localhost:5214

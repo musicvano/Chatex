@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Chatex.DataAccess\Chatex.DataAccess.csproj" />
+    <ProjectReference Include="..\..\Chatex.DataAccess\Chatex.DataAccess.csproj" />
   </ItemGroup>
 
   <ItemGroup>
