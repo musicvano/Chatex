@@ -1,5 +1,12 @@
 import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
-import { ChangeDetectionStrategy, Component, effect, inject, signal, untracked } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { ProfileApi, avatarUrl } from '../../core/api/chatex-api';
@@ -20,7 +27,7 @@ import { PASSWORD_PATTERN } from '../auth/register.page';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'flex min-h-0 flex-1 flex-col overflow-y-auto' },
   template: `
-    <div class="mx-auto w-full max-w-2xl space-y-6 px-4 pt-safe pb-24 md:px-8 md:pb-10">
+    <div class="pt-safe mx-auto w-full max-w-2xl space-y-6 px-4 pb-24 md:px-8 md:pb-10">
       <header class="pt-6">
         <h1 class="text-2xl font-bold tracking-tight">Settings</h1>
       </header>
@@ -31,21 +38,54 @@ import { PASSWORD_PATTERN } from '../auth/register.page';
           <h2 id="profile-heading" class="text-base font-semibold">Profile</h2>
           <div class="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
             <div class="relative">
-              <app-avatar [id]="me.id" [name]="me.displayName" [hasAvatar]="me.hasAvatar" [size]="88" />
-              <button type="button" class="absolute -right-1 -bottom-1 flex size-9 items-center justify-center rounded-full border-2 border-surface bg-brand-600 text-white shadow" aria-label="Change photo" [cdkMenuTriggerFor]="avatarMenu">
+              <app-avatar
+                [id]="me.id"
+                [name]="me.displayName"
+                [hasAvatar]="me.hasAvatar"
+                [size]="88"
+              />
+              <button
+                type="button"
+                class="absolute -right-1 -bottom-1 flex size-9 items-center justify-center rounded-full border-2 border-surface bg-brand-600 text-white shadow"
+                aria-label="Change photo"
+                [cdkMenuTriggerFor]="avatarMenu"
+              >
                 <svg lucideCamera class="size-4"></svg>
               </button>
               <ng-template #avatarMenu>
                 <div cdkMenu class="menu">
-                  <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="avatarInput.click()"><svg lucideCamera class="size-4"></svg>Upload photo</button>
+                  <button
+                    cdkMenuItem
+                    class="menu-item"
+                    (cdkMenuItemTriggered)="avatarInput.click()"
+                  >
+                    <svg lucideCamera class="size-4"></svg>Upload photo
+                  </button>
                   @if (me.hasAvatar) {
-                    <button cdkMenuItem class="menu-item text-red-600 dark:text-red-400" (cdkMenuItemTriggered)="removeAvatar()"><svg lucideTrash class="size-4"></svg>Remove photo</button>
+                    <button
+                      cdkMenuItem
+                      class="menu-item text-red-600 dark:text-red-400"
+                      (cdkMenuItemTriggered)="removeAvatar()"
+                    >
+                      <svg lucideTrash class="size-4"></svg>Remove photo
+                    </button>
                   }
                 </div>
               </ng-template>
-              <input #avatarInput type="file" accept="image/jpeg,image/png,image/webp" class="hidden" (change)="uploadAvatar(avatarInput)" />
+              <input
+                #avatarInput
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                class="hidden"
+                (change)="uploadAvatar(avatarInput)"
+              />
             </div>
-            <form [formGroup]="profile" (ngSubmit)="saveProfile()" class="w-full flex-1 space-y-4" novalidate>
+            <form
+              [formGroup]="profile"
+              (ngSubmit)="saveProfile()"
+              class="w-full flex-1 space-y-4"
+              novalidate
+            >
               <div class="grid gap-4 sm:grid-cols-2">
                 <div>
                   <span class="label">User name</span>
@@ -58,15 +98,37 @@ import { PASSWORD_PATTERN } from '../auth/register.page';
               </div>
               <div>
                 <label class="label" for="displayName">Display name</label>
-                <input id="displayName" class="input" formControlName="displayName" maxlength="64" [class.input-invalid]="profile.controls.displayName.invalid && profile.controls.displayName.touched" />
+                <input
+                  id="displayName"
+                  class="input"
+                  formControlName="displayName"
+                  maxlength="64"
+                  [class.input-invalid]="
+                    profile.controls.displayName.invalid && profile.controls.displayName.touched
+                  "
+                />
               </div>
               <div>
                 <label class="label" for="bio">Bio</label>
-                <textarea id="bio" class="input min-h-24" formControlName="bio" maxlength="500" placeholder="A few words about you"></textarea>
-                <p class="mt-1 text-right text-xs text-muted">{{ profile.controls.bio.value.length }} / 500</p>
+                <textarea
+                  id="bio"
+                  class="input min-h-24"
+                  formControlName="bio"
+                  maxlength="500"
+                  placeholder="A few words about you"
+                ></textarea>
+                <p class="mt-1 text-right text-xs text-muted">
+                  {{ profile.controls.bio.value.length }} / 500
+                </p>
               </div>
               <div class="flex justify-end">
-                <button type="submit" class="btn-primary" [disabled]="savingProfile() || profile.pristine">Save profile</button>
+                <button
+                  type="submit"
+                  class="btn-primary"
+                  [disabled]="savingProfile() || profile.pristine"
+                >
+                  Save profile
+                </button>
               </div>
             </form>
           </div>
@@ -75,20 +137,34 @@ import { PASSWORD_PATTERN } from '../auth/register.page';
         <!-- Appearance -->
         <section class="card p-5 sm:p-6" aria-labelledby="theme-heading">
           <h2 id="theme-heading" class="text-base font-semibold">Appearance</h2>
-          <div class="mt-4 grid grid-cols-3 gap-2" role="radiogroup" aria-labelledby="theme-heading">
+          <div
+            class="mt-4 grid grid-cols-3 gap-2"
+            role="radiogroup"
+            aria-labelledby="theme-heading"
+          >
             @for (option of themes; track option.value) {
               <button
                 type="button"
                 role="radio"
                 class="flex flex-col items-center gap-2 rounded-xl border px-3 py-4 text-sm transition-colors"
-                [class]="theme.preference() === option.value ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-200' : 'border-line hover:bg-subtle'"
+                [class]="
+                  theme.preference() === option.value
+                    ? 'border-brand-500 bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-200'
+                    : 'border-line hover:bg-subtle'
+                "
                 [attr.aria-checked]="theme.preference() === option.value"
                 (click)="theme.set(option.value)"
               >
                 @switch (option.value) {
-                  @case ('light') { <svg lucideSun class="size-5"></svg> }
-                  @case ('dark') { <svg lucideMoon class="size-5"></svg> }
-                  @case ('system') { <svg lucideMonitor class="size-5"></svg> }
+                  @case ('light') {
+                    <svg lucideSun class="size-5"></svg>
+                  }
+                  @case ('dark') {
+                    <svg lucideMoon class="size-5"></svg>
+                  }
+                  @case ('system') {
+                    <svg lucideMonitor class="size-5"></svg>
+                  }
                 }
                 {{ option.label }}
               </button>
@@ -99,16 +175,37 @@ import { PASSWORD_PATTERN } from '../auth/register.page';
         <!-- Password -->
         <section class="card p-5 sm:p-6" aria-labelledby="password-heading">
           <h2 id="password-heading" class="text-base font-semibold">Change password</h2>
-          <p class="mt-1 text-sm text-muted">You will be signed out on all devices, including this one.</p>
-          <form [formGroup]="password" (ngSubmit)="changePassword()" class="mt-4 space-y-4" novalidate>
+          <p class="mt-1 text-sm text-muted">
+            You will be signed out on all devices, including this one.
+          </p>
+          <form
+            [formGroup]="password"
+            (ngSubmit)="changePassword()"
+            class="mt-4 space-y-4"
+            novalidate
+          >
             <div>
               <label class="label" for="currentPassword">Current password</label>
-              <input id="currentPassword" class="input" type="password" autocomplete="current-password" formControlName="currentPassword" />
-              @if (passwordError('currentPassword'); as m) { <p class="field-error">{{ m }}</p> }
+              <input
+                id="currentPassword"
+                class="input"
+                type="password"
+                autocomplete="current-password"
+                formControlName="currentPassword"
+              />
+              @if (passwordError('currentPassword'); as m) {
+                <p class="field-error">{{ m }}</p>
+              }
             </div>
             <div>
               <label class="label" for="newPassword">New password</label>
-              <input id="newPassword" class="input" type="password" autocomplete="new-password" formControlName="newPassword" />
+              <input
+                id="newPassword"
+                class="input"
+                type="password"
+                autocomplete="new-password"
+                formControlName="newPassword"
+              />
               @if (passwordError('newPassword'); as m) {
                 <p class="field-error">{{ m }}</p>
               } @else {
@@ -116,7 +213,9 @@ import { PASSWORD_PATTERN } from '../auth/register.page';
               }
             </div>
             <div class="flex justify-end">
-              <button type="submit" class="btn-primary" [disabled]="changingPassword()"><svg lucideKeyRound class="size-4"></svg>Change password</button>
+              <button type="submit" class="btn-primary" [disabled]="changingPassword()">
+                <svg lucideKeyRound class="size-4"></svg>Change password
+              </button>
             </div>
           </form>
         </section>
@@ -125,8 +224,16 @@ import { PASSWORD_PATTERN } from '../auth/register.page';
         <section class="card p-5 sm:p-6" aria-labelledby="sessions-heading">
           <h2 id="sessions-heading" class="text-base font-semibold">Sessions</h2>
           <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-            <button type="button" class="btn-secondary" (click)="auth.logout()"><svg lucideLogOut class="size-4"></svg>Sign out</button>
-            <button type="button" class="btn-secondary text-red-600 dark:text-red-400" (click)="logoutAll()">Sign out everywhere</button>
+            <button type="button" class="btn-secondary" (click)="auth.logout()">
+              <svg lucideLogOut class="size-4"></svg>Sign out
+            </button>
+            <button
+              type="button"
+              class="btn-secondary text-red-600 dark:text-red-400"
+              (click)="logoutAll()"
+            >
+              Sign out everywhere
+            </button>
           </div>
         </section>
       }
@@ -159,7 +266,15 @@ export class SettingsPage {
 
   protected readonly password = this.fb.group({
     currentPassword: ['', Validators.required],
-    newPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(128), Validators.pattern(PASSWORD_PATTERN)]],
+    newPassword: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(128),
+        Validators.pattern(PASSWORD_PATTERN),
+      ],
+    ],
   });
 
   constructor() {

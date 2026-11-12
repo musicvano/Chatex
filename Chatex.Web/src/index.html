@@ -13,7 +13,8 @@
       (function () {
         try {
           var t = localStorage.getItem('chatex.theme') || 'system';
-          var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+          var dark =
+            t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
           document.documentElement.classList.toggle('dark', dark);
         } catch (e) {}
       })();

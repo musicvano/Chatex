@@ -1,5 +1,12 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject, input, resource } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  resource,
+} from '@angular/core';
 import { attachmentUrl } from '../../core/api/chatex-api';
 import { AttachmentDto } from '../../core/api/models';
 import { BlobUrlService } from '../../core/media/blob-url.service';
@@ -26,9 +33,13 @@ export const isImage = (a: AttachmentDto) =>
       @if (src.value(); as url) {
         <img [src]="url" [alt]="attachment().fileName" class="size-full object-cover" />
       } @else if (src.isLoading()) {
-        <span class="flex size-full items-center justify-center"><svg lucideLoaderCircle class="size-6 animate-spin opacity-60"></svg></span>
+        <span class="flex size-full items-center justify-center"
+          ><svg lucideLoaderCircle class="size-6 animate-spin opacity-60"></svg
+        ></span>
       } @else {
-        <span class="flex size-full items-center justify-center text-xs opacity-70">Image unavailable</span>
+        <span class="flex size-full items-center justify-center text-xs opacity-70"
+          >Image unavailable</span
+        >
       }
     </button>
   `,
@@ -46,7 +57,11 @@ export class AttachmentImage {
   protected open(): void {
     const url = this.src.value();
     if (url) {
-      this.dialogs.open(ImageViewer, { url, attachment: this.attachment() }, { panelClass: 'app-dialog-panel' });
+      this.dialogs.open(
+        ImageViewer,
+        { url, attachment: this.attachment() },
+        { panelClass: 'app-dialog-panel' },
+      );
     }
   }
 }
@@ -72,7 +87,14 @@ export class AttachmentImage {
         [attr.aria-label]="'Download ' + a.fileName"
         (click)="download(a)"
       >
-        <span class="flex size-10 shrink-0 items-center justify-center rounded-lg" [class]="mine() ? 'bg-white/20' : 'bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300'">
+        <span
+          class="flex size-10 shrink-0 items-center justify-center rounded-lg"
+          [class]="
+            mine()
+              ? 'bg-white/20'
+              : 'bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300'
+          "
+        >
           <svg lucideFileText class="size-5"></svg>
         </span>
         <span class="min-w-0 flex-1">
@@ -111,14 +133,28 @@ export class MessageAttachments {
   template: `
     <div class="relative flex max-h-[100dvh] max-w-[100vw] flex-col items-center">
       <div class="absolute top-2 right-2 z-10 flex gap-2">
-        <button type="button" class="flex size-10 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80" aria-label="Download" (click)="download()">
+        <button
+          type="button"
+          class="flex size-10 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+          aria-label="Download"
+          (click)="download()"
+        >
           <svg lucideDownload class="size-5"></svg>
         </button>
-        <button type="button" class="flex size-10 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80" aria-label="Close" (click)="ref.close()">
+        <button
+          type="button"
+          class="flex size-10 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+          aria-label="Close"
+          (click)="ref.close()"
+        >
           <svg lucideX class="size-5"></svg>
         </button>
       </div>
-      <img [src]="data.url" [alt]="data.attachment.fileName" class="max-h-[92dvh] max-w-[96vw] rounded-lg object-contain shadow-2xl" />
+      <img
+        [src]="data.url"
+        [alt]="data.attachment.fileName"
+        class="max-h-[92dvh] max-w-[96vw] rounded-lg object-contain shadow-2xl"
+      />
     </div>
   `,
 })

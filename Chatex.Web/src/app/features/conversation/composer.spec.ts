@@ -84,7 +84,10 @@ describe('Composer', () => {
 
   it(`uploads at most ${MAX_ATTACHMENTS} files per message`, async () => {
     const { fixture } = await create();
-    const files = Array.from({ length: MAX_ATTACHMENTS + 2 }, (_, i) => new File(['x'], `f${i}.txt`, { type: 'text/plain' }));
+    const files = Array.from(
+      { length: MAX_ATTACHMENTS + 2 },
+      (_, i) => new File(['x'], `f${i}.txt`, { type: 'text/plain' }),
+    );
 
     fixture.componentInstance.addFiles(files);
 
@@ -94,7 +97,9 @@ describe('Composer', () => {
 
   it('rejects file types the server does not accept', async () => {
     const { fixture } = await create();
-    fixture.componentInstance.addFiles([new File(['x'], 'run.exe', { type: 'application/x-msdownload' })]);
+    fixture.componentInstance.addFiles([
+      new File(['x'], 'run.exe', { type: 'application/x-msdownload' }),
+    ]);
     expect(upload).not.toHaveBeenCalled();
     expect(toast.error).toHaveBeenCalled();
   });

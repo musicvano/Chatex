@@ -8,7 +8,7 @@ import { ICONS } from './icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="pointer-events-none fixed inset-x-0 top-0 z-[1100] flex flex-col items-center gap-2 p-3 pt-safe sm:top-auto sm:bottom-0 sm:items-end sm:p-6"
+      class="pt-safe pointer-events-none fixed inset-x-0 top-0 z-[1100] flex flex-col items-center gap-2 p-3 sm:top-auto sm:bottom-0 sm:items-end sm:p-6"
       aria-live="polite"
     >
       @for (toast of toasts.toasts(); track toast.id) {

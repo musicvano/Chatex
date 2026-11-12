@@ -11,8 +11,16 @@ import { MessagesStore, merge } from './messages.store';
 describe('MessagesStore', () => {
   let store: MessagesStore;
   let realtime: ReturnType<typeof fakeRealtime>;
-  let api: { list: ReturnType<typeof vi.fn>; send: ReturnType<typeof vi.fn>; edit: ReturnType<typeof vi.fn>; delete: ReturnType<typeof vi.fn> };
-  let chats: { markReadLocally: ReturnType<typeof vi.fn>; noteOwnMessage: ReturnType<typeof vi.fn> };
+  let api: {
+    list: ReturnType<typeof vi.fn>;
+    send: ReturnType<typeof vi.fn>;
+    edit: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
+  };
+  let chats: {
+    markReadLocally: ReturnType<typeof vi.fn>;
+    noteOwnMessage: ReturnType<typeof vi.fn>;
+  };
   let chatsApi: { markRead: ReturnType<typeof vi.fn> };
 
   const page = (items: MessageDto[], nextCursor: string | null = null): PageDto<MessageDto> => ({
@@ -76,7 +84,10 @@ describe('MessagesStore', () => {
   it('applies edits and deletions from the hub', async () => {
     await openWith([message(2), message(1)]);
 
-    realtime.events.next({ type: 'messageUpdated', message: message(1, { body: 'edited', editedAt: '2026-11-10T12:05:00Z' }) });
+    realtime.events.next({
+      type: 'messageUpdated',
+      message: message(1, { body: 'edited', editedAt: '2026-11-10T12:05:00Z' }),
+    });
     realtime.events.next({ type: 'messageDeleted', chatId: 'chat-1', messageId: messageId(2) });
 
     const [first, second] = store.messages();
@@ -93,7 +104,10 @@ describe('MessagesStore', () => {
     const sending = store.send('hello', []);
     expect(store.messages().at(-1)).toMatchObject({ body: 'hello', localState: 'pending' });
 
-    const sent = message(2, { body: 'hello', sender: { ...BOB, id: ME.id, displayName: ME.displayName } });
+    const sent = message(2, {
+      body: 'hello',
+      sender: { ...BOB, id: ME.id, displayName: ME.displayName },
+    });
     response.next(sent);
     response.complete();
     await sending;
@@ -167,9 +181,24 @@ describe('MessagesStore', () => {
   it('tracks how far other members have read', async () => {
     await openWith([message(2), message(1)]);
 
-    realtime.events.next({ type: 'messagesRead', chatId: 'chat-1', userId: BOB.id, lastReadMessageId: messageId(2) });
-    realtime.events.next({ type: 'messagesRead', chatId: 'chat-1', userId: BOB.id, lastReadMessageId: messageId(1) });
-    realtime.events.next({ type: 'messagesRead', chatId: 'chat-1', userId: ME.id, lastReadMessageId: messageId(9) });
+    realtime.events.next({
+      type: 'messagesRead',
+      chatId: 'chat-1',
+      userId: BOB.id,
+      lastReadMessageId: messageId(2),
+    });
+    realtime.events.next({
+      type: 'messagesRead',
+      chatId: 'chat-1',
+      userId: BOB.id,
+      lastReadMessageId: messageId(1),
+    });
+    realtime.events.next({
+      type: 'messagesRead',
+      chatId: 'chat-1',
+      userId: ME.id,
+      lastReadMessageId: messageId(9),
+    });
 
     expect(store.peerReadUpTo()).toBe(messageId(2));
   });

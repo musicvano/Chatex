@@ -84,14 +84,20 @@ export class RealtimeService {
       return;
     }
     const connection = new HubConnectionBuilder()
-      .withUrl('/hubs/chat', { accessTokenFactory: async () => (await this.auth.getValidToken()) ?? '' })
+      .withUrl('/hubs/chat', {
+        accessTokenFactory: async () => (await this.auth.getValidToken()) ?? '',
+      })
       .withAutomaticReconnect([0, 2_000, 5_000, 10_000, 20_000, 30_000])
       .configureLogging(LogLevel.Warning)
       .build();
 
     const emit = (event: HubEvent) => this.events.next(event);
-    connection.on('MessageCreated', (message: MessageDto) => emit({ type: 'messageCreated', message }));
-    connection.on('MessageUpdated', (message: MessageDto) => emit({ type: 'messageUpdated', message }));
+    connection.on('MessageCreated', (message: MessageDto) =>
+      emit({ type: 'messageCreated', message }),
+    );
+    connection.on('MessageUpdated', (message: MessageDto) =>
+      emit({ type: 'messageUpdated', message }),
+    );
     connection.on('MessageDeleted', (chatId: string, messageId: string) =>
       emit({ type: 'messageDeleted', chatId, messageId }),
     );
@@ -106,7 +112,9 @@ export class RealtimeService {
     );
     connection.on('ChatUpdated', (chatId: string) => emit({ type: 'chatUpdated', chatId }));
     connection.on('ChatDeleted', (chatId: string) => emit({ type: 'chatDeleted', chatId }));
-    connection.on('Typing', (chatId: string, userId: string) => emit({ type: 'typing', chatId, userId }));
+    connection.on('Typing', (chatId: string, userId: string) =>
+      emit({ type: 'typing', chatId, userId }),
+    );
     connection.on('UserOnline', (userId: string) => emit({ type: 'userOnline', userId }));
     connection.on('UserOffline', (userId: string, lastSeenAt: string) =>
       emit({ type: 'userOffline', userId, lastSeenAt }),

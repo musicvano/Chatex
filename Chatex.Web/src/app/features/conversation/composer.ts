@@ -81,37 +81,61 @@ let uploadKeys = 0;
           <p class="font-medium text-brand-600 dark:text-brand-400">Editing message</p>
           <p class="truncate text-muted">{{ m.body }}</p>
         </div>
-        <button type="button" class="icon-btn size-8" aria-label="Cancel editing" (click)="cancel()"><svg lucideX class="size-4"></svg></button>
+        <button
+          type="button"
+          class="icon-btn size-8"
+          aria-label="Cancel editing"
+          (click)="cancel()"
+        >
+          <svg lucideX class="size-4"></svg>
+        </button>
       </div>
     } @else if (replyTo(); as m) {
       <div class="flex items-center gap-3 border-b border-line px-4 py-2 text-sm">
         <svg lucideReply class="size-4 shrink-0 text-brand-600"></svg>
         <div class="min-w-0 flex-1">
-          <p class="font-medium text-brand-600 dark:text-brand-400">Reply to {{ m.sender.displayName }}</p>
+          <p class="font-medium text-brand-600 dark:text-brand-400">
+            Reply to {{ m.sender.displayName }}
+          </p>
           <p class="truncate text-muted">{{ m.body || '📎 Attachment' }}</p>
         </div>
-        <button type="button" class="icon-btn size-8" aria-label="Cancel reply" (click)="cancel()"><svg lucideX class="size-4"></svg></button>
+        <button type="button" class="icon-btn size-8" aria-label="Cancel reply" (click)="cancel()">
+          <svg lucideX class="size-4"></svg>
+        </button>
       </div>
     }
 
     @if (uploads().length) {
       <ul class="flex gap-2 overflow-x-auto px-3 pt-3" aria-label="Attachments">
         @for (u of uploads(); track u.key) {
-          <li class="relative flex w-44 shrink-0 items-center gap-2 rounded-xl border border-line bg-subtle p-2 pr-7" [class.border-red-400]="u.error">
+          <li
+            class="relative flex w-44 shrink-0 items-center gap-2 rounded-xl border border-line bg-subtle p-2 pr-7"
+            [class.border-red-400]="u.error"
+          >
             <svg lucideFile class="size-5 shrink-0 text-muted"></svg>
             <div class="min-w-0 flex-1">
               <p class="truncate text-xs font-medium">{{ u.file.name }}</p>
               @if (u.error) {
-                <p class="truncate text-[11px] text-red-600 dark:text-red-400" [title]="u.error">{{ u.error }}</p>
+                <p class="truncate text-[11px] text-red-600 dark:text-red-400" [title]="u.error">
+                  {{ u.error }}
+                </p>
               } @else if (!u.attachment) {
                 <div class="mt-1 h-1 overflow-hidden rounded bg-line">
-                  <div class="h-full bg-brand-500 transition-[width]" [style.width.%]="u.progress"></div>
+                  <div
+                    class="h-full bg-brand-500 transition-[width]"
+                    [style.width.%]="u.progress"
+                  ></div>
                 </div>
               } @else {
                 <p class="text-[11px] text-muted">{{ u.file.size | fileSize }}</p>
               }
             </div>
-            <button type="button" class="absolute top-1 right-1 rounded-full p-1 text-muted hover:bg-line hover:text-fg" [attr.aria-label]="'Remove ' + u.file.name" (click)="removeUpload(u.key)">
+            <button
+              type="button"
+              class="absolute top-1 right-1 rounded-full p-1 text-muted hover:bg-line hover:text-fg"
+              [attr.aria-label]="'Remove ' + u.file.name"
+              (click)="removeUpload(u.key)"
+            >
               <svg lucideX class="size-3.5"></svg>
             </button>
           </li>
@@ -119,9 +143,18 @@ let uploadKeys = 0;
       </ul>
     }
 
-    <form class="flex items-end gap-1 px-2 py-2 sm:px-3" (submit)="$event.preventDefault(); submit()">
+    <form
+      class="flex items-end gap-1 px-2 py-2 sm:px-3"
+      (submit)="$event.preventDefault(); submit()"
+    >
       @if (!editing()) {
-        <button type="button" class="icon-btn" aria-label="Attach files" title="Attach files" (click)="fileInput.click()">
+        <button
+          type="button"
+          class="icon-btn"
+          aria-label="Attach files"
+          title="Attach files"
+          (click)="fileInput.click()"
+        >
           <svg lucidePaperclip class="size-5"></svg>
         </button>
         <input #fileInput type="file" multiple class="hidden" (change)="onFilesPicked(fileInput)" />
@@ -140,7 +173,9 @@ let uploadKeys = 0;
           (paste)="onPaste($event)"
         ></textarea>
         @if (text().length > maxBody - 300) {
-          <p class="px-4 pt-1 text-right text-[11px] text-muted">{{ text().length }} / {{ maxBody }}</p>
+          <p class="px-4 pt-1 text-right text-[11px] text-muted">
+            {{ text().length }} / {{ maxBody }}
+          </p>
         }
       </div>
       <button
@@ -149,7 +184,11 @@ let uploadKeys = 0;
         [disabled]="!canSubmit()"
         [attr.aria-label]="editing() ? 'Save' : 'Send'"
       >
-        @if (editing()) { <svg lucideCheck class="size-5"></svg> } @else { <svg lucideSend class="size-5"></svg> }
+        @if (editing()) {
+          <svg lucideCheck class="size-5"></svg>
+        } @else {
+          <svg lucideSend class="size-5"></svg>
+        }
       </button>
     </form>
   `,

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, resource } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  resource,
+} from '@angular/core';
 import { avatarUrl } from '../../core/api/chatex-api';
 import { BlobUrlService } from '../../core/media/blob-url.service';
 
@@ -18,7 +25,11 @@ const COLORS = [
 @Component({
   selector: 'app-avatar',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  host: { class: 'relative inline-flex shrink-0', '[style.width.px]': 'size()', '[style.height.px]': 'size()' },
+  host: {
+    class: 'relative inline-flex shrink-0',
+    '[style.width.px]': 'size()',
+    '[style.height.px]': 'size()',
+  },
   template: `
     @if (image.value(); as src) {
       <img [src]="src" alt="" class="size-full rounded-full object-cover" />

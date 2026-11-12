@@ -8,7 +8,11 @@ import { BlobUrlService } from '../core/media/blob-url.service';
 import { RealtimeService } from '../core/realtime/realtime.service';
 import { ChatsStore } from './chats.store';
 
-function item(id: string, lastActivityAt: string, overrides: Partial<ChatListItemDto> = {}): ChatListItemDto {
+function item(
+  id: string,
+  lastActivityAt: string,
+  overrides: Partial<ChatListItemDto> = {},
+): ChatListItemDto {
   return {
     id,
     type: 'group',

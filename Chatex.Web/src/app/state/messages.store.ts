@@ -175,7 +175,12 @@ export class MessagesStore {
     const pending: ChatMessage = {
       id: localId,
       chatId,
-      sender: { id: me.id, userName: me.userName, displayName: me.displayName, hasAvatar: me.hasAvatar },
+      sender: {
+        id: me.id,
+        userName: me.userName,
+        displayName: me.displayName,
+        hasAvatar: me.hasAvatar,
+      },
       body,
       replyToMessageId: replyToMessageId ?? null,
       createdAt: new Date().toISOString(),
@@ -240,7 +245,12 @@ export class MessagesStore {
         return;
       }
       // The hub event may have arrived first; either way keep exactly one copy.
-      this.messages.update((list) => merge(list.filter((m) => m.id !== pending.id), [sent]));
+      this.messages.update((list) =>
+        merge(
+          list.filter((m) => m.id !== pending.id),
+          [sent],
+        ),
+      );
       this.chats.noteOwnMessage(sent);
     } catch (error) {
       if (generation === this.generation) {

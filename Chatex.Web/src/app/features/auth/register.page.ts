@@ -21,35 +21,75 @@ export const PASSWORD_PATTERN = /\d/;
     <app-auth-layout heading="Create your account" subheading="It takes less than a minute">
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4" novalidate>
         @if (error()) {
-          <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300" role="alert">
+          <p
+            class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+            role="alert"
+          >
             {{ error() }}
           </p>
         }
         <div>
           <label class="label" for="displayName">Display name</label>
-          <input id="displayName" class="input" formControlName="displayName" autocomplete="name" maxlength="64" [class.input-invalid]="message('displayName')" />
-          @if (message('displayName'); as m) { <p class="field-error">{{ m }}</p> }
+          <input
+            id="displayName"
+            class="input"
+            formControlName="displayName"
+            autocomplete="name"
+            maxlength="64"
+            [class.input-invalid]="message('displayName')"
+          />
+          @if (message('displayName'); as m) {
+            <p class="field-error">{{ m }}</p>
+          }
         </div>
         <div>
           <label class="label" for="userName">User name</label>
           <div class="relative">
-            <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">&#64;</span>
-            <input id="userName" class="input pl-7" formControlName="userName" autocomplete="username" autocapitalize="none" maxlength="32" [class.input-invalid]="message('userName')" />
+            <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted"
+              >&#64;</span
+            >
+            <input
+              id="userName"
+              class="input pl-7"
+              formControlName="userName"
+              autocomplete="username"
+              autocapitalize="none"
+              maxlength="32"
+              [class.input-invalid]="message('userName')"
+            />
           </div>
           @if (message('userName'); as m) {
             <p class="field-error">{{ m }}</p>
           } @else {
-            <p class="mt-1 text-xs text-muted">3–32 characters: letters, digits and _. Starts with a letter.</p>
+            <p class="mt-1 text-xs text-muted">
+              3–32 characters: letters, digits and _. Starts with a letter.
+            </p>
           }
         </div>
         <div>
           <label class="label" for="email">Email</label>
-          <input id="email" class="input" type="email" formControlName="email" autocomplete="email" [class.input-invalid]="message('email')" />
-          @if (message('email'); as m) { <p class="field-error">{{ m }}</p> }
+          <input
+            id="email"
+            class="input"
+            type="email"
+            formControlName="email"
+            autocomplete="email"
+            [class.input-invalid]="message('email')"
+          />
+          @if (message('email'); as m) {
+            <p class="field-error">{{ m }}</p>
+          }
         </div>
         <div>
           <label class="label" for="password">Password</label>
-          <input id="password" class="input" type="password" formControlName="password" autocomplete="new-password" [class.input-invalid]="message('password')" />
+          <input
+            id="password"
+            class="input"
+            type="password"
+            formControlName="password"
+            autocomplete="new-password"
+            [class.input-invalid]="message('password')"
+          />
           @if (message('password'); as m) {
             <p class="field-error">{{ m }}</p>
           } @else {
@@ -65,7 +105,12 @@ export const PASSWORD_PATTERN = /\d/;
       </form>
       <p class="mt-6 text-center text-sm text-muted">
         Already have an account?
-        <a routerLink="/login" [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : {}" class="font-medium text-brand-600 hover:underline dark:text-brand-400">Sign in</a>
+        <a
+          routerLink="/login"
+          [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : {}"
+          class="font-medium text-brand-600 hover:underline dark:text-brand-400"
+          >Sign in</a
+        >
       </p>
     </app-auth-layout>
   `,
@@ -84,12 +129,22 @@ export class RegisterPage {
     displayName: ['', [Validators.required, Validators.maxLength(64)]],
     userName: [
       '',
-      [Validators.required, Validators.minLength(3), Validators.maxLength(32), Validators.pattern(USER_NAME_PATTERN)],
+      [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(32),
+        Validators.pattern(USER_NAME_PATTERN),
+      ],
     ],
     email: ['', [Validators.required, Validators.email, Validators.maxLength(256)]],
     password: [
       '',
-      [Validators.required, Validators.minLength(8), Validators.maxLength(128), Validators.pattern(PASSWORD_PATTERN)],
+      [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(128),
+        Validators.pattern(PASSWORD_PATTERN),
+      ],
     ],
   });
 

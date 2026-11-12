@@ -44,11 +44,16 @@ import { MessageList } from './message-list';
       (dragleave)="dragging.set(false)"
       (drop)="onDrop($event)"
     >
-      <header class="flex items-center gap-1 border-b border-line bg-surface/95 px-2 pt-safe backdrop-blur sm:px-3">
+      <header
+        class="pt-safe flex items-center gap-1 border-b border-line bg-surface/95 px-2 backdrop-blur sm:px-3"
+      >
         <a routerLink="/chats" class="icon-btn md:hidden" aria-label="Back to chats">
           <svg lucideArrowLeft class="size-5"></svg>
         </a>
-        <a [routerLink]="['/chats', chatId(), 'info']" class="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-2 pr-2 pl-1 hover:bg-subtle/60">
+        <a
+          [routerLink]="['/chats', chatId(), 'info']"
+          class="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-2 pr-2 pl-1 hover:bg-subtle/60"
+        >
           <app-avatar
             [kind]="isDirect() ? 'user' : 'chat'"
             [id]="isDirect() ? chat()?.peer?.id : chatId()"
@@ -59,21 +64,37 @@ import { MessageList } from './message-list';
           />
           <span class="min-w-0">
             <span class="block truncate font-semibold">{{ title() }}</span>
-            <span class="block truncate text-xs" [class]="typingText() ? 'text-brand-600 dark:text-brand-400' : 'text-muted'">
+            <span
+              class="block truncate text-xs"
+              [class]="typingText() ? 'text-brand-600 dark:text-brand-400' : 'text-muted'"
+            >
               {{ typingText() ?? subtitle() }}
             </span>
           </span>
         </a>
-        <a [routerLink]="['/chats', chatId(), 'info']" class="icon-btn" aria-label="Chat info" title="Chat info">
+        <a
+          [routerLink]="['/chats', chatId(), 'info']"
+          class="icon-btn"
+          aria-label="Chat info"
+          title="Chat info"
+        >
           <svg lucideInfo class="size-5"></svg>
         </a>
       </header>
 
       @if (store.error() && !store.messages().length) {
         <div class="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-          <p class="text-sm text-muted">{{ chat() && !chat()!.myRole ? 'Join this chat to read its messages.' : "Messages couldn't be loaded." }}</p>
+          <p class="text-sm text-muted">
+            {{
+              chat() && !chat()!.myRole
+                ? 'Join this chat to read its messages.'
+                : "Messages couldn't be loaded."
+            }}
+          </p>
           @if (!chat() || chat()!.myRole) {
-            <button type="button" class="btn-secondary" (click)="store.loadInitial()"><svg lucideRotateCw class="size-4"></svg>Try again</button>
+            <button type="button" class="btn-secondary" (click)="store.loadInitial()">
+              <svg lucideRotateCw class="size-4"></svg>Try again
+            </button>
           }
         </div>
       } @else {
@@ -98,8 +119,13 @@ import { MessageList } from './message-list';
 
       @if (chat(); as c) {
         @if (!c.myRole) {
-          <div class="border-t border-line bg-surface p-3 pb-safe text-center">
-            <button type="button" class="btn-primary w-full sm:w-auto" [disabled]="joining()" (click)="join()">
+          <div class="pb-safe border-t border-line bg-surface p-3 text-center">
+            <button
+              type="button"
+              class="btn-primary w-full sm:w-auto"
+              [disabled]="joining()"
+              (click)="join()"
+            >
               <svg lucideUserPlus class="size-4"></svg> Join {{ c.type }}
             </button>
           </div>
@@ -111,9 +137,15 @@ import { MessageList } from './message-list';
             [(editing)]="editing"
           />
         } @else {
-          <div class="flex items-center justify-center gap-2 border-t border-line bg-surface p-3 pb-safe text-sm text-muted">
+          <div
+            class="pb-safe flex items-center justify-center gap-2 border-t border-line bg-surface p-3 text-sm text-muted"
+          >
             <svg lucideMegaphone class="size-4"></svg> Only admins can post in this channel
-            <button type="button" class="ml-2 font-medium text-brand-600 hover:underline dark:text-brand-400" (click)="toggleMute()">
+            <button
+              type="button"
+              class="ml-2 font-medium text-brand-600 hover:underline dark:text-brand-400"
+              (click)="toggleMute()"
+            >
               {{ c.isMuted ? 'Unmute' : 'Mute' }}
             </button>
           </div>
@@ -121,8 +153,12 @@ import { MessageList } from './message-list';
       }
 
       @if (dragging()) {
-        <div class="pointer-events-none absolute inset-2 z-20 flex items-center justify-center rounded-2xl border-2 border-dashed border-brand-500 bg-brand-50/90 text-brand-700 dark:bg-brand-950/90 dark:text-brand-200">
-          <span class="flex items-center gap-2 font-medium"><svg lucidePaperclip class="size-5"></svg> Drop files to attach</span>
+        <div
+          class="pointer-events-none absolute inset-2 z-20 flex items-center justify-center rounded-2xl border-2 border-dashed border-brand-500 bg-brand-50/90 text-brand-700 dark:bg-brand-950/90 dark:text-brand-200"
+        >
+          <span class="flex items-center gap-2 font-medium"
+            ><svg lucidePaperclip class="size-5"></svg> Drop files to attach</span
+          >
         </div>
       }
     </section>

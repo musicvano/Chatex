@@ -1,5 +1,12 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { ChangeDetectionStrategy, Component, computed, inject, resource, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  resource,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { ChatsApi, UsersApi } from '../../core/api/chatex-api';
@@ -16,23 +23,46 @@ import { timeAgo } from '../../shared/ui/pipes';
   imports: [Avatar, ICONS],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="dialog-card relative p-6 text-center" role="dialog" aria-label="User profile">
-      <button type="button" class="icon-btn absolute top-2 right-2" aria-label="Close" (click)="ref.close()">
+    <div class="relative dialog-card p-6 text-center" role="dialog" aria-label="User profile">
+      <button
+        type="button"
+        class="absolute top-2 right-2 icon-btn"
+        aria-label="Close"
+        (click)="ref.close()"
+      >
         <svg lucideX class="size-5"></svg>
       </button>
       @if (user.value(); as u) {
         <div class="flex flex-col items-center gap-3">
-          <app-avatar [id]="u.id" [name]="u.displayName" [hasAvatar]="u.hasAvatar" [size]="96" [online]="presence.isOnline(u.id)" />
+          <app-avatar
+            [id]="u.id"
+            [name]="u.displayName"
+            [hasAvatar]="u.hasAvatar"
+            [size]="96"
+            [online]="presence.isOnline(u.id)"
+          />
           <div>
             <h2 class="text-xl font-semibold">{{ u.displayName }}</h2>
             <p class="text-sm text-muted">&#64;{{ u.userName }}</p>
-            <p class="mt-1 text-xs" [class]="presence.isOnline(u.id) ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted'">{{ status() }}</p>
+            <p
+              class="mt-1 text-xs"
+              [class]="
+                presence.isOnline(u.id) ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted'
+              "
+            >
+              {{ status() }}
+            </p>
           </div>
           @if (u.bio) {
             <p class="max-w-sm text-sm whitespace-pre-wrap">{{ u.bio }}</p>
           }
           @if (u.id !== me()?.id) {
-            <button type="button" class="btn-primary mt-2" [disabled]="busy()" (click)="message(u.id)">
+            <button
+              type="button"
+              class="mt-2 btn-primary"
+              [disabled]="busy()"
+              (click)="message(u.id)"
+            >
               <svg lucideMessagesSquare class="size-4"></svg> Send message
             </button>
           }
@@ -40,7 +70,9 @@ import { timeAgo } from '../../shared/ui/pipes';
       } @else if (user.error()) {
         <p class="py-8 text-sm text-muted">This user could not be loaded.</p>
       } @else {
-        <div class="flex justify-center py-12 text-muted"><svg lucideLoaderCircle class="size-6 animate-spin"></svg></div>
+        <div class="flex justify-center py-12 text-muted">
+          <svg lucideLoaderCircle class="size-6 animate-spin"></svg>
+        </div>
       }
     </div>
   `,

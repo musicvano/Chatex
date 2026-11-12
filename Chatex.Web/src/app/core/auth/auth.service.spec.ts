@@ -20,7 +20,11 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([{ path: '**', children: [] }])],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([{ path: '**', children: [] }]),
+      ],
     });
     auth = TestBed.inject(AuthService);
     http = TestBed.inject(HttpTestingController);

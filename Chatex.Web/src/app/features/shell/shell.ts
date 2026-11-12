@@ -28,7 +28,11 @@ import { ChatListPane } from '../chat-list/chat-list-pane';
         class="hidden w-18 shrink-0 flex-col items-center gap-2 border-r border-line bg-surface py-4 md:flex"
         aria-label="Main"
       >
-        <a routerLink="/chats" class="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-600 text-white" aria-label="Chatex home">
+        <a
+          routerLink="/chats"
+          class="mb-4 flex size-11 items-center justify-center rounded-xl bg-brand-600 text-white"
+          aria-label="Chatex home"
+        >
           <svg lucideMessagesSquare class="size-6"></svg>
         </a>
         @for (item of nav; track item.path) {
@@ -40,22 +44,50 @@ import { ChatListPane } from '../chat-list/chat-list-pane';
             [title]="item.label"
           >
             @switch (item.icon) {
-              @case ('chats') { <svg lucideMessagesSquare class="size-5"></svg> }
-              @case ('discover') { <svg lucideCompass class="size-5"></svg> }
-              @case ('settings') { <svg lucideSettings class="size-5"></svg> }
+              @case ('chats') {
+                <svg lucideMessagesSquare class="size-5"></svg>
+              }
+              @case ('discover') {
+                <svg lucideCompass class="size-5"></svg>
+              }
+              @case ('settings') {
+                <svg lucideSettings class="size-5"></svg>
+              }
             }
             @if (item.icon === 'chats' && unread()) {
-              <span class="badge absolute -top-1 -right-1 bg-brand-600 text-white">{{ unreadLabel() }}</span>
+              <span class="absolute -top-1 -right-1 badge bg-brand-600 text-white">{{
+                unreadLabel()
+              }}</span>
             }
           </a>
         }
         <div class="mt-auto flex flex-col items-center gap-2">
-          <button type="button" class="icon-btn" (click)="toggleTheme()" [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'" [title]="theme.isDark() ? 'Light theme' : 'Dark theme'">
-            @if (theme.isDark()) { <svg lucideSun class="size-5"></svg> } @else { <svg lucideMoon class="size-5"></svg> }
+          <button
+            type="button"
+            class="icon-btn"
+            (click)="toggleTheme()"
+            [attr.aria-label]="theme.isDark() ? 'Switch to light theme' : 'Switch to dark theme'"
+            [title]="theme.isDark() ? 'Light theme' : 'Dark theme'"
+          >
+            @if (theme.isDark()) {
+              <svg lucideSun class="size-5"></svg>
+            } @else {
+              <svg lucideMoon class="size-5"></svg>
+            }
           </button>
           @if (auth.user(); as me) {
-            <a routerLink="/settings" class="rounded-full" [title]="me.displayName" aria-label="Your profile">
-              <app-avatar [id]="me.id" [name]="me.displayName" [hasAvatar]="me.hasAvatar" [size]="36" />
+            <a
+              routerLink="/settings"
+              class="rounded-full"
+              [title]="me.displayName"
+              aria-label="Your profile"
+            >
+              <app-avatar
+                [id]="me.id"
+                [name]="me.displayName"
+                [hasAvatar]="me.hasAvatar"
+                [size]="36"
+              />
             </a>
           }
         </div>
@@ -69,9 +101,19 @@ import { ChatListPane } from '../chat-list/chat-list-pane';
       />
 
       <!-- Main pane -->
-      <main class="min-w-0 flex-1 flex-col md:flex" [class.hidden]="onChatsRoot()" [class.flex]="!onChatsRoot()">
-        @if (realtime.state() === 'reconnecting' || (realtime.state() === 'disconnected' && auth.isAuthenticated())) {
-          <div class="flex items-center justify-center gap-2 bg-amber-100 px-3 py-1.5 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-200" role="status">
+      <main
+        class="min-w-0 flex-1 flex-col md:flex"
+        [class.hidden]="onChatsRoot()"
+        [class.flex]="!onChatsRoot()"
+      >
+        @if (
+          realtime.state() === 'reconnecting' ||
+          (realtime.state() === 'disconnected' && auth.isAuthenticated())
+        ) {
+          <div
+            class="flex items-center justify-center gap-2 bg-amber-100 px-3 py-1.5 text-xs text-amber-900 dark:bg-amber-900/40 dark:text-amber-200"
+            role="status"
+          >
             <svg lucideWifiOff class="size-3.5"></svg>
             Connecting… live updates are paused
           </div>
@@ -85,24 +127,34 @@ import { ChatListPane } from '../chat-list/chat-list-pane';
     <!-- Bottom tab bar (phones), hidden inside a conversation -->
     @if (!inConversation()) {
       <nav
-        class="fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-surface/95 pb-safe backdrop-blur md:hidden"
+        class="pb-safe fixed inset-x-0 bottom-0 z-30 flex border-t border-line bg-surface/95 backdrop-blur md:hidden"
         aria-label="Main"
       >
         @for (item of nav; track item.path) {
           <a
             [routerLink]="item.path"
             routerLinkActive="!text-brand-600 dark:!text-brand-400"
-            [routerLinkActiveOptions]="{ exact: item.path !== '/settings' && item.path !== '/discover' }"
+            [routerLinkActiveOptions]="{
+              exact: item.path !== '/settings' && item.path !== '/discover',
+            }"
             class="relative flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 text-[11px] text-muted"
           >
             @switch (item.icon) {
-              @case ('chats') { <svg lucideMessagesSquare class="size-5"></svg> }
-              @case ('discover') { <svg lucideCompass class="size-5"></svg> }
-              @case ('settings') { <svg lucideSettings class="size-5"></svg> }
+              @case ('chats') {
+                <svg lucideMessagesSquare class="size-5"></svg>
+              }
+              @case ('discover') {
+                <svg lucideCompass class="size-5"></svg>
+              }
+              @case ('settings') {
+                <svg lucideSettings class="size-5"></svg>
+              }
             }
             {{ item.label }}
             @if (item.icon === 'chats' && unread()) {
-              <span class="badge absolute top-1.5 left-1/2 ml-1.5 bg-brand-600 text-white">{{ unreadLabel() }}</span>
+              <span class="absolute top-1.5 left-1/2 ml-1.5 badge bg-brand-600 text-white">{{
+                unreadLabel()
+              }}</span>
             }
           </a>
         }
@@ -135,7 +187,9 @@ export class Shell {
   protected readonly inConversation = computed(() => /^\/chats\/[^/]+/.test(this.path()));
 
   protected readonly unread = this.chats.totalUnread;
-  protected readonly unreadLabel = computed(() => (this.unread() > 99 ? '99+' : String(this.unread())));
+  protected readonly unreadLabel = computed(() =>
+    this.unread() > 99 ? '99+' : String(this.unread()),
+  );
 
   constructor() {
     void this.chats.loadFirst().catch(() => undefined);
