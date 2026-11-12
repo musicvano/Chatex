@@ -1,0 +1,42 @@
+# Chatex API (Kestrel on 127.0.0.1:5000, behind Nginx).
+# Install: cp deploy/systemd/chatex-api.service /etc/systemd/system/ && systemctl daemon-reload
+#          systemctl enable chatex-api
+# Logs:    journalctl -u chatex-api -f
+[Unit]
+Description=Chatex API
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=chatex
+Group=chatex
+# /opt/chatex/current is a symlink to the active release; it is resolved on every (re)start.
+WorkingDirectory=/opt/chatex/current/api
+ExecStart=/usr/bin/dotnet /opt/chatex/current/api/Chatex.Api.dll
+EnvironmentFile=/etc/chatex/chatex.env
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:5000
+Environment=DOTNET_NOLOGO=true
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=true
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+SyslogIdentifier=chatex-api
+
+# Hardening: the release is read-only; only the uploads folder is writable.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/chatex
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

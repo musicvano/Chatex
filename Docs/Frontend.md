@@ -56,8 +56,8 @@ npm test -- --watch=false
 npm run build
 ```
 
-`npm run format` runs Prettier (100-column lines, single quotes, Tailwind class sorting). Unit tests are described in [Testing](Testing.md#frontend).
+`npm run format` runs Prettier (100-column lines, single quotes, Tailwind class sorting); `npm run format:check` only reports unformatted files, as CI does. Unit tests are described in [Testing](Testing.md#frontend).
 
 ## Production build
 
-The production build lands in `Chatex.Web/dist/chatex/browser`; serve it with an SPA fallback to `index.html` and proxy `/api` and `/hubs` (with WebSocket upgrade) to the API.
+The production build lands in `Chatex.Web/dist/chatex/browser`; serve it with an SPA fallback to `index.html` and proxy `/api` and `/hubs` (with WebSocket upgrade) to the API. [Deployment](Deployment.md) has the Nginx site used in production.

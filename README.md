@@ -25,11 +25,12 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core, S
 | Validation | FluentValidation |
 | Tests | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn, WebApplicationFactory |
 | Frontend | Angular 22 (standalone, signals, zoneless), Tailwind CSS v4, Angular CDK, `@microsoft/signalr`, Lucide icons, Vitest |
-| Planned | Playwright, GitHub Actions, Nginx + systemd on Ubuntu |
+| CI/CD | GitHub Actions; deploys to Nginx + systemd on Ubuntu ([Deployment](Docs/Deployment.md)) |
+| Planned | Playwright |
 
 ## Quick start
 
-You need the .NET 10 SDK, PostgreSQL 18, Node.js 24 and the `dotnet-ef` tool; see [Getting started](Docs/GettingStarted.md) for details and configuration.
+You need the .NET 10 SDK, PostgreSQL 18, Node.js 24 and the `dotnet-ef` tool (`dotnet tool restore`); see [Getting started](Docs/GettingStarted.md) for details and configuration.
 
 ```bash
 dotnet ef database update --project Chatex.DataAccess
