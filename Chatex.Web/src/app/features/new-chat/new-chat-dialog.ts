@@ -20,10 +20,10 @@ export const HANDLE_PATTERN = /^[a-zA-Z][a-zA-Z0-9_]{4,31}$/;
   imports: [ReactiveFormsModule, UserSearch, ICONS],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="dialog-card flex flex-col" role="dialog" aria-labelledby="new-chat-title">
+    <div class="flex dialog-card flex-col" role="dialog" aria-labelledby="new-chat-title">
       <header class="flex items-center gap-2 border-b border-line px-5 py-3">
         <h2 id="new-chat-title" class="flex-1 text-lg font-semibold">New chat</h2>
-        <button type="button" class="icon-btn -mr-2" aria-label="Close" (click)="ref.close()">
+        <button type="button" class="-mr-2 icon-btn" aria-label="Close" (click)="ref.close()">
           <svg lucideX class="size-5"></svg>
         </button>
       </header>
@@ -40,9 +40,15 @@ export const HANDLE_PATTERN = /^[a-zA-Z][a-zA-Z0-9_]{4,31}$/;
               (click)="tab.set(t.id)"
             >
               @switch (t.id) {
-                @case ('direct') { <svg lucideUser class="size-4"></svg> }
-                @case ('group') { <svg lucideUsers class="size-4"></svg> }
-                @case ('channel') { <svg lucideMegaphone class="size-4"></svg> }
+                @case ('direct') {
+                  <svg lucideUser class="size-4"></svg>
+                }
+                @case ('group') {
+                  <svg lucideUsers class="size-4"></svg>
+                }
+                @case ('channel') {
+                  <svg lucideMegaphone class="size-4"></svg>
+                }
               }
               {{ t.label }}
             </button>
@@ -53,34 +59,75 @@ export const HANDLE_PATTERN = /^[a-zA-Z][a-zA-Z0-9_]{4,31}$/;
       <div class="px-5 py-4">
         @if (tab() === 'direct') {
           @if (error()) {
-            <p class="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300" role="alert">{{ error() }}</p>
+            <p
+              class="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+              role="alert"
+            >
+              {{ error() }}
+            </p>
           }
           <p class="mb-3 text-sm text-muted">Find someone to message directly.</p>
           <app-user-search (picked)="startDirect($event)" />
         } @else {
           <form [formGroup]="form" (ngSubmit)="create()" class="space-y-4" novalidate>
             @if (error()) {
-              <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300" role="alert">{{ error() }}</p>
+              <p
+                class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+                role="alert"
+              >
+                {{ error() }}
+              </p>
             }
             <div>
-              <label class="label" for="chat-title">{{ tab() === 'channel' ? 'Channel name' : 'Group name' }}</label>
-              <input id="chat-title" class="input" formControlName="title" maxlength="128" [class.input-invalid]="titleInvalid()" />
-              @if (titleInvalid()) { <p class="field-error">A name is required.</p> }
+              <label class="label" for="chat-title">{{
+                tab() === 'channel' ? 'Channel name' : 'Group name'
+              }}</label>
+              <input
+                id="chat-title"
+                class="input"
+                formControlName="title"
+                maxlength="128"
+                [class.input-invalid]="titleInvalid()"
+              />
+              @if (titleInvalid()) {
+                <p class="field-error">A name is required.</p>
+              }
             </div>
             <div>
-              <label class="label" for="chat-description">Description <span class="font-normal text-muted">(optional)</span></label>
-              <textarea id="chat-description" class="input min-h-20" formControlName="description" maxlength="1000"></textarea>
+              <label class="label" for="chat-description"
+                >Description <span class="font-normal text-muted">(optional)</span></label
+              >
+              <textarea
+                id="chat-description"
+                class="input min-h-20"
+                formControlName="description"
+                maxlength="1000"
+              ></textarea>
             </div>
             <div>
-              <label class="label" for="chat-handle">Public handle <span class="font-normal text-muted">(optional)</span></label>
+              <label class="label" for="chat-handle"
+                >Public handle <span class="font-normal text-muted">(optional)</span></label
+              >
               <div class="relative">
-                <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">&#64;</span>
-                <input id="chat-handle" class="input pl-7" formControlName="publicHandle" autocapitalize="none" maxlength="32" [class.input-invalid]="handleError()" />
+                <span
+                  class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted"
+                  >&#64;</span
+                >
+                <input
+                  id="chat-handle"
+                  class="input pl-7"
+                  formControlName="publicHandle"
+                  autocapitalize="none"
+                  maxlength="32"
+                  [class.input-invalid]="handleError()"
+                />
               </div>
               @if (handleError(); as m) {
                 <p class="field-error">{{ m }}</p>
               } @else {
-                <p class="mt-1 text-xs text-muted">With a handle the {{ tab() }} is public: anyone can find and join it.</p>
+                <p class="mt-1 text-xs text-muted">
+                  With a handle the {{ tab() }} is public: anyone can find and join it.
+                </p>
               }
             </div>
             <div>
@@ -90,7 +137,9 @@ export const HANDLE_PATTERN = /^[a-zA-Z][a-zA-Z0-9_]{4,31}$/;
             <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
               <button type="button" class="btn-secondary" (click)="ref.close()">Cancel</button>
               <button type="submit" class="btn-primary" [disabled]="busy()">
-                @if (busy()) { <svg lucideLoaderCircle class="size-4 animate-spin"></svg> }
+                @if (busy()) {
+                  <svg lucideLoaderCircle class="size-4 animate-spin"></svg>
+                }
                 Create {{ tab() }}
               </button>
             </div>
@@ -137,7 +186,9 @@ export class NewChatDialog {
     if (this.serverHandleError()) {
       return this.serverHandleError();
     }
-    return c.invalid && c.touched ? '5–32 characters: letters, digits and _, starting with a letter.' : null;
+    return c.invalid && c.touched
+      ? '5–32 characters: letters, digits and _, starting with a letter.'
+      : null;
   }
 
   protected async startDirect(user: UserSummaryDto): Promise<void> {

@@ -38,11 +38,13 @@ export const routes: Routes = [
       },
       {
         path: 'discover',
-        loadComponent: () => import('./features/discover/discover.page').then((m) => m.DiscoverPage),
+        loadComponent: () =>
+          import('./features/discover/discover.page').then((m) => m.DiscoverPage),
       },
       {
         path: 'settings',
-        loadComponent: () => import('./features/settings/settings.page').then((m) => m.SettingsPage),
+        loadComponent: () =>
+          import('./features/settings/settings.page').then((m) => m.SettingsPage),
       },
     ],
   },

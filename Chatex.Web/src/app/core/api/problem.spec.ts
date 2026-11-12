@@ -27,7 +27,9 @@ describe('problem', () => {
   });
 
   it('falls back to detail, then the first field error', () => {
-    expect(problemMessage(httpError(400, { code: 'x', detail: 'Server says no' }))).toBe('Server says no');
+    expect(problemMessage(httpError(400, { code: 'x', detail: 'Server says no' }))).toBe(
+      'Server says no',
+    );
     expect(problemMessage(httpError(400, { errors: { title: ['Title is required.'] } }))).toBe(
       'Title is required.',
     );

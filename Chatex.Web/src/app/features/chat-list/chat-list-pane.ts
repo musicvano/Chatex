@@ -25,16 +25,25 @@ import { NewChatDialog } from '../new-chat/new-chat-dialog';
   imports: [RouterLink, RouterLinkActive, Avatar, ShortWhenPipe, ICONS],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <header class="flex items-center gap-2 px-4 pt-safe">
+    <header class="pt-safe flex items-center gap-2 px-4">
       <h1 class="flex-1 py-4 text-xl font-bold tracking-tight">Chats</h1>
-      <button type="button" class="icon-btn" aria-label="New chat" title="New chat" (click)="newChat()">
+      <button
+        type="button"
+        class="icon-btn"
+        aria-label="New chat"
+        title="New chat"
+        (click)="newChat()"
+      >
         <svg lucideSquarePen class="size-5"></svg>
       </button>
     </header>
     <div class="px-4 pb-3">
       <label class="relative block">
         <span class="sr-only">Filter chats</span>
-        <svg lucideSearch class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted"></svg>
+        <svg
+          lucideSearch
+          class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted"
+        ></svg>
         <input
           class="input border-transparent bg-subtle pl-9"
           type="search"
@@ -60,7 +69,9 @@ import { NewChatDialog } from '../new-chat/new-chat-dialog';
         </ul>
       } @else if (store.loaded() && !store.items().length) {
         <div class="flex flex-col items-center gap-3 px-6 py-16 text-center">
-          <span class="flex size-14 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-300">
+          <span
+            class="flex size-14 items-center justify-center rounded-full bg-brand-50 text-brand-600 dark:bg-brand-950 dark:text-brand-300"
+          >
             <svg lucideMessagesSquare class="size-7"></svg>
           </span>
           <p class="font-medium">No chats yet</p>
@@ -99,9 +110,15 @@ import { NewChatDialog } from '../new-chat/new-chat-dialog';
                   }
                   <span class="truncate font-medium">{{ title(chat) }}</span>
                   @if (chat.isMuted) {
-                    <svg lucideBellOff class="size-3.5 shrink-0 text-muted" aria-label="Muted"></svg>
+                    <svg
+                      lucideBellOff
+                      class="size-3.5 shrink-0 text-muted"
+                      aria-label="Muted"
+                    ></svg>
                   }
-                  <span class="ml-auto shrink-0 pl-2 text-xs text-muted">{{ chat.lastMessage?.createdAt ?? chat.lastActivityAt | shortWhen }}</span>
+                  <span class="ml-auto shrink-0 pl-2 text-xs text-muted">{{
+                    chat.lastMessage?.createdAt ?? chat.lastActivityAt | shortWhen
+                  }}</span>
                 </span>
                 <span class="mt-0.5 flex items-center gap-2">
                   <span class="min-w-0 flex-1 truncate text-sm text-muted">
@@ -112,7 +129,14 @@ import { NewChatDialog } from '../new-chat/new-chat-dialog';
                     }
                   </span>
                   @if (chat.unreadCount) {
-                    <span class="badge" [class]="chat.isMuted ? 'bg-zinc-400 text-white dark:bg-zinc-600' : 'bg-brand-600 text-white'">
+                    <span
+                      class="badge"
+                      [class]="
+                        chat.isMuted
+                          ? 'bg-zinc-400 text-white dark:bg-zinc-600'
+                          : 'bg-brand-600 text-white'
+                      "
+                    >
                       {{ chat.unreadCount > 99 ? '99+' : chat.unreadCount }}
                     </span>
                   }

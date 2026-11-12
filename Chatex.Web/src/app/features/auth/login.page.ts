@@ -14,7 +14,10 @@ import { AuthLayout } from './auth-layout';
     <app-auth-layout heading="Welcome back" subheading="Sign in to continue to Chatex">
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4" novalidate>
         @if (error()) {
-          <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300" role="alert">
+          <p
+            class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300"
+            role="alert"
+          >
             {{ error() }}
           </p>
         }
@@ -55,7 +58,12 @@ import { AuthLayout } from './auth-layout';
       </form>
       <p class="mt-6 text-center text-sm text-muted">
         New to Chatex?
-        <a routerLink="/register" [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : {}" class="font-medium text-brand-600 hover:underline dark:text-brand-400">Create an account</a>
+        <a
+          routerLink="/register"
+          [queryParams]="returnUrl() ? { returnUrl: returnUrl() } : {}"
+          class="font-medium text-brand-600 hover:underline dark:text-brand-400"
+          >Create an account</a
+        >
       </p>
     </app-auth-layout>
   `,

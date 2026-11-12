@@ -100,15 +100,22 @@ export function buildRows(
       aria-label="Messages"
     >
       @if (loadingOlder()) {
-        <div class="flex justify-center py-3 text-muted"><svg lucideLoaderCircle class="size-5 animate-spin"></svg></div>
+        <div class="flex justify-center py-3 text-muted">
+          <svg lucideLoaderCircle class="size-5 animate-spin"></svg>
+        </div>
       } @else if (!hasOlder() && messages().length && !loading()) {
-        <p class="py-4 text-center text-xs text-muted">This is the beginning of the conversation.</p>
+        <p class="py-4 text-center text-xs text-muted">
+          This is the beginning of the conversation.
+        </p>
       }
 
       @for (row of rows(); track row.key) {
         @if (row.kind === 'day') {
           <div class="sticky top-1 z-10 flex justify-center py-2">
-            <span class="rounded-full border border-line bg-surface/90 px-3 py-1 text-xs font-medium text-muted shadow-sm backdrop-blur">{{ row.label }}</span>
+            <span
+              class="rounded-full border border-line bg-surface/90 px-3 py-1 text-xs font-medium text-muted shadow-sm backdrop-blur"
+              >{{ row.label }}</span
+            >
           </div>
         } @else {
           @let m = row.message;
@@ -122,13 +129,26 @@ export function buildRows(
             @if (!row.mine && showAvatars()) {
               <div class="w-8 shrink-0 self-end">
                 @if (row.last) {
-                  <button type="button" class="rounded-full" [attr.aria-label]="'Profile of ' + m.sender.displayName" (click)="openUser.emit(m.sender.id)">
-                    <app-avatar [id]="m.sender.id" [name]="m.sender.displayName" [hasAvatar]="m.sender.hasAvatar" [size]="32" />
+                  <button
+                    type="button"
+                    class="rounded-full"
+                    [attr.aria-label]="'Profile of ' + m.sender.displayName"
+                    (click)="openUser.emit(m.sender.id)"
+                  >
+                    <app-avatar
+                      [id]="m.sender.id"
+                      [name]="m.sender.displayName"
+                      [hasAvatar]="m.sender.hasAvatar"
+                      [size]="32"
+                    />
                   </button>
                 }
               </div>
             }
-            <div class="group flex max-w-[85%] min-w-0 items-center gap-1 sm:max-w-[75%] xl:max-w-[65%]" [class.flex-row-reverse]="row.mine">
+            <div
+              class="group flex max-w-[85%] min-w-0 items-center gap-1 sm:max-w-[75%] xl:max-w-[65%]"
+              [class.flex-row-reverse]="row.mine"
+            >
               <div
                 class="min-w-0 rounded-2xl px-3 py-1.5 shadow-sm transition-shadow"
                 [class]="
@@ -140,7 +160,11 @@ export function buildRows(
                 "
               >
                 @if (row.first && !row.mine && showNames()) {
-                  <button type="button" class="block text-xs font-semibold text-brand-600 hover:underline dark:text-brand-400" (click)="openUser.emit(m.sender.id)">
+                  <button
+                    type="button"
+                    class="block text-xs font-semibold text-brand-600 hover:underline dark:text-brand-400"
+                    (click)="openUser.emit(m.sender.id)"
+                  >
                     {{ m.sender.displayName }}
                   </button>
                 }
@@ -151,11 +175,19 @@ export function buildRows(
                     <button
                       type="button"
                       class="my-1 block w-full min-w-0 rounded-lg border-l-[3px] px-2 py-1 text-left text-xs"
-                      [class]="row.mine ? 'border-white/70 bg-white/15' : 'border-brand-500 bg-brand-50 dark:bg-brand-950/60'"
+                      [class]="
+                        row.mine
+                          ? 'border-white/70 bg-white/15'
+                          : 'border-brand-500 bg-brand-50 dark:bg-brand-950/60'
+                      "
                       (click)="row.reply && jumpTo(row.reply.id)"
                     >
-                      <span class="block font-semibold">{{ row.reply?.sender?.displayName ?? 'Reply' }}</span>
-                      <span class="block truncate opacity-80">{{ row.reply ? snippet(row.reply) : 'Original message' }}</span>
+                      <span class="block font-semibold">{{
+                        row.reply?.sender?.displayName ?? 'Reply'
+                      }}</span>
+                      <span class="block truncate opacity-80">{{
+                        row.reply ? snippet(row.reply) : 'Original message'
+                      }}</span>
                     </button>
                   }
                   @if (m.attachments.length) {
@@ -164,16 +196,35 @@ export function buildRows(
                     </div>
                   }
                   @if (m.body) {
-                    <p class="text-[15px] leading-snug break-words whitespace-pre-wrap">{{ m.body }}</p>
+                    <p class="text-[15px] leading-snug break-words whitespace-pre-wrap">
+                      {{ m.body }}
+                    </p>
                   }
                 }
-                <span class="-mb-0.5 flex items-center justify-end gap-1 text-[11px] leading-4" [class]="row.mine ? 'text-white/75' : 'text-muted'">
-                  @if (m.editedAt && !m.isDeleted) { <span>edited</span> }
+                <span
+                  class="-mb-0.5 flex items-center justify-end gap-1 text-[11px] leading-4"
+                  [class]="row.mine ? 'text-white/75' : 'text-muted'"
+                >
+                  @if (m.editedAt && !m.isDeleted) {
+                    <span>edited</span>
+                  }
                   <time [attr.datetime]="m.createdAt">{{ m.createdAt | clock }}</time>
                   @if (row.mine) {
                     @switch (m.localState) {
-                      @case ('pending') { <svg lucideLoaderCircle class="size-3.5 animate-spin" aria-label="Sending"></svg> }
-                      @case ('failed') { <svg lucideCircleExclamationPoint class="size-3.5 text-red-200" aria-label="Not sent"></svg> }
+                      @case ('pending') {
+                        <svg
+                          lucideLoaderCircle
+                          class="size-3.5 animate-spin"
+                          aria-label="Sending"
+                        ></svg>
+                      }
+                      @case ('failed') {
+                        <svg
+                          lucideCircleExclamationPoint
+                          class="size-3.5 text-red-200"
+                          aria-label="Not sent"
+                        ></svg>
+                      }
                       @default {
                         @if (row.seen) {
                           <svg lucideCheckCheck class="size-3.5" aria-label="Seen"></svg>
@@ -198,16 +249,28 @@ export function buildRows(
                 <ng-template #menu>
                   <div cdkMenu class="menu">
                     @if (allowReply()) {
-                      <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="reply.emit(m)"><svg lucideReply class="size-4"></svg>Reply</button>
+                      <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="reply.emit(m)">
+                        <svg lucideReply class="size-4"></svg>Reply
+                      </button>
                     }
                     @if (m.body) {
-                      <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="copy(m)"><svg lucideCopy class="size-4"></svg>Copy text</button>
+                      <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="copy(m)">
+                        <svg lucideCopy class="size-4"></svg>Copy text
+                      </button>
                     }
                     @if (row.mine && m.body) {
-                      <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="edit.emit(m)"><svg lucidePencil class="size-4"></svg>Edit</button>
+                      <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="edit.emit(m)">
+                        <svg lucidePencil class="size-4"></svg>Edit
+                      </button>
                     }
                     @if (row.mine || canModerate()) {
-                      <button cdkMenuItem class="menu-item text-red-600 dark:text-red-400" (cdkMenuItemTriggered)="remove.emit(m)"><svg lucideTrash class="size-4"></svg>Delete</button>
+                      <button
+                        cdkMenuItem
+                        class="menu-item text-red-600 dark:text-red-400"
+                        (cdkMenuItemTriggered)="remove.emit(m)"
+                      >
+                        <svg lucideTrash class="size-4"></svg>Delete
+                      </button>
                     }
                   </div>
                 </ng-template>
@@ -217,17 +280,29 @@ export function buildRows(
           @if (m.localState === 'failed') {
             <div class="mt-1 flex justify-end gap-3 px-4 text-xs lg:px-6">
               <span class="text-red-600 dark:text-red-400">Not sent.</span>
-              <button type="button" class="font-medium text-brand-600 hover:underline dark:text-brand-400" (click)="retry.emit(m)">Retry</button>
-              <button type="button" class="text-muted hover:underline" (click)="discard.emit(m)">Delete</button>
+              <button
+                type="button"
+                class="font-medium text-brand-600 hover:underline dark:text-brand-400"
+                (click)="retry.emit(m)"
+              >
+                Retry
+              </button>
+              <button type="button" class="text-muted hover:underline" (click)="discard.emit(m)">
+                Delete
+              </button>
             </div>
           }
         }
       }
 
       @if (loading() && !messages().length) {
-        <div class="flex h-full items-center justify-center text-muted"><svg lucideLoaderCircle class="size-6 animate-spin"></svg></div>
+        <div class="flex h-full items-center justify-center text-muted">
+          <svg lucideLoaderCircle class="size-6 animate-spin"></svg>
+        </div>
       } @else if (!loading() && !messages().length) {
-        <div class="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-muted">
+        <div
+          class="flex h-full flex-col items-center justify-center gap-2 px-6 text-center text-muted"
+        >
           <svg lucideMessagesSquare class="size-10 opacity-50"></svg>
           <p class="text-sm">{{ emptyText() }}</p>
         </div>

@@ -44,21 +44,39 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'fixed inset-0 z-40 flex justify-end xl:static xl:z-auto' },
   template: `
-    <a [routerLink]="['/chats', chatId()]" class="absolute inset-0 hidden bg-black/30 md:block xl:hidden" aria-label="Close chat info" tabindex="-1"></a>
-    <aside class="relative flex h-full w-full flex-col bg-surface md:w-96 md:border-l md:border-line md:shadow-2xl xl:w-80 xl:shadow-none 2xl:w-96" aria-label="Chat info">
-      <header class="flex items-center gap-2 border-b border-line px-2 pt-safe">
+    <a
+      [routerLink]="['/chats', chatId()]"
+      class="absolute inset-0 hidden bg-black/30 md:block xl:hidden"
+      aria-label="Close chat info"
+      tabindex="-1"
+    ></a>
+    <aside
+      class="relative flex h-full w-full flex-col bg-surface md:w-96 md:border-l md:border-line md:shadow-2xl xl:w-80 xl:shadow-none 2xl:w-96"
+      aria-label="Chat info"
+    >
+      <header class="pt-safe flex items-center gap-2 border-b border-line px-2">
         <a [routerLink]="['/chats', chatId()]" class="icon-btn" aria-label="Close chat info">
           <svg lucideArrowLeft class="size-5 md:hidden"></svg>
           <svg lucideX class="hidden size-5 md:block"></svg>
         </a>
-        <h2 class="flex-1 py-4 font-semibold">{{ chat()?.type === 'direct' ? 'Profile' : 'Chat info' }}</h2>
+        <h2 class="flex-1 py-4 font-semibold">
+          {{ chat()?.type === 'direct' ? 'Profile' : 'Chat info' }}
+        </h2>
         @if (canEdit() && !editing()) {
-          <button type="button" class="icon-btn" aria-label="Edit chat" title="Edit" (click)="startEdit()"><svg lucidePencil class="size-5"></svg></button>
+          <button
+            type="button"
+            class="icon-btn"
+            aria-label="Edit chat"
+            title="Edit"
+            (click)="startEdit()"
+          >
+            <svg lucidePencil class="size-5"></svg>
+          </button>
         }
       </header>
 
       @if (chat(); as c) {
-        <div class="min-h-0 flex-1 overflow-y-auto pb-safe">
+        <div class="pb-safe min-h-0 flex-1 overflow-y-auto">
           <!-- Identity -->
           <section class="flex flex-col items-center gap-3 px-6 pt-6 pb-4 text-center">
             <div class="relative">
@@ -71,19 +89,42 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
                 [size]="96"
               />
               @if (canEdit()) {
-                <button type="button" class="absolute -right-1 -bottom-1 flex size-9 items-center justify-center rounded-full border-2 border-surface bg-brand-600 text-white shadow" aria-label="Change chat photo" [cdkMenuTriggerFor]="avatarMenu">
+                <button
+                  type="button"
+                  class="absolute -right-1 -bottom-1 flex size-9 items-center justify-center rounded-full border-2 border-surface bg-brand-600 text-white shadow"
+                  aria-label="Change chat photo"
+                  [cdkMenuTriggerFor]="avatarMenu"
+                >
                   <svg lucideCamera class="size-4"></svg>
                 </button>
                 <ng-template #avatarMenu>
                   <div cdkMenu class="menu">
-                    <button cdkMenuItem class="menu-item" (cdkMenuItemTriggered)="avatarInput.click()"><svg lucideCamera class="size-4"></svg>Upload photo</button>
+                    <button
+                      cdkMenuItem
+                      class="menu-item"
+                      (cdkMenuItemTriggered)="avatarInput.click()"
+                    >
+                      <svg lucideCamera class="size-4"></svg>Upload photo
+                    </button>
                     @if (c.hasAvatar) {
-                      <button cdkMenuItem class="menu-item text-red-600 dark:text-red-400" (cdkMenuItemTriggered)="removeAvatar()"><svg lucideTrash class="size-4"></svg>Remove photo</button>
+                      <button
+                        cdkMenuItem
+                        class="menu-item text-red-600 dark:text-red-400"
+                        (cdkMenuItemTriggered)="removeAvatar()"
+                      >
+                        <svg lucideTrash class="size-4"></svg>Remove photo
+                      </button>
                     }
                   </div>
                 </ng-template>
               }
-              <input #avatarInput type="file" accept="image/jpeg,image/png,image/webp" class="hidden" (change)="uploadAvatar(avatarInput)" />
+              <input
+                #avatarInput
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                class="hidden"
+                (change)="uploadAvatar(avatarInput)"
+              />
             </div>
             @if (!editing()) {
               <div>
@@ -112,23 +153,46 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
               </div>
               <div>
                 <label class="label" for="info-description">Description</label>
-                <textarea id="info-description" class="input min-h-20" formControlName="description" maxlength="1000"></textarea>
+                <textarea
+                  id="info-description"
+                  class="input min-h-20"
+                  formControlName="description"
+                  maxlength="1000"
+                ></textarea>
               </div>
               <div>
                 <label class="label" for="info-handle">Public handle</label>
                 <div class="relative">
-                  <span class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted">&#64;</span>
-                  <input id="info-handle" class="input pl-7" formControlName="publicHandle" autocapitalize="none" maxlength="32" />
+                  <span
+                    class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted"
+                    >&#64;</span
+                  >
+                  <input
+                    id="info-handle"
+                    class="input pl-7"
+                    formControlName="publicHandle"
+                    autocapitalize="none"
+                    maxlength="32"
+                  />
                 </div>
-                <p class="mt-1 text-xs" [class]="handleInvalid() ? 'text-red-600 dark:text-red-400' : 'text-muted'">
-                  {{ handleInvalid() ? '5–32 characters: letters, digits and _, starting with a letter.' : 'Leave empty to make the chat private.' }}
+                <p
+                  class="mt-1 text-xs"
+                  [class]="handleInvalid() ? 'text-red-600 dark:text-red-400' : 'text-muted'"
+                >
+                  {{
+                    handleInvalid()
+                      ? '5–32 characters: letters, digits and _, starting with a letter.'
+                      : 'Leave empty to make the chat private.'
+                  }}
                 </p>
               </div>
               @if (formError()) {
                 <p class="field-error">{{ formError() }}</p>
               }
               <div class="flex gap-2">
-                <button type="button" class="btn-secondary flex-1" (click)="editing.set(false)">Cancel</button>
+                <button type="button" class="btn-secondary flex-1" (click)="editing.set(false)">
+                  Cancel
+                </button>
                 <button type="submit" class="btn-primary flex-1" [disabled]="busy()">Save</button>
               </div>
             </form>
@@ -142,7 +206,9 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
               }
             } @else if (c.description) {
               <section class="border-t border-line px-5 py-4">
-                <h4 class="text-xs font-semibold tracking-wide text-muted uppercase">Description</h4>
+                <h4 class="text-xs font-semibold tracking-wide text-muted uppercase">
+                  Description
+                </h4>
                 <p class="mt-1 text-sm whitespace-pre-wrap">{{ c.description }}</p>
               </section>
             }
@@ -151,11 +217,27 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
           <!-- Settings -->
           @if (c.myRole) {
             <section class="border-t border-line px-2 py-2">
-              <button type="button" class="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left hover:bg-subtle" role="switch" [attr.aria-checked]="!c.isMuted" (click)="toggleMute()">
-                @if (c.isMuted) { <svg lucideBellOff class="size-5 text-muted"></svg> } @else { <svg lucideBell class="size-5 text-muted"></svg> }
+              <button
+                type="button"
+                class="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left hover:bg-subtle"
+                role="switch"
+                [attr.aria-checked]="!c.isMuted"
+                (click)="toggleMute()"
+              >
+                @if (c.isMuted) {
+                  <svg lucideBellOff class="size-5 text-muted"></svg>
+                } @else {
+                  <svg lucideBell class="size-5 text-muted"></svg>
+                }
                 <span class="flex-1 text-sm">Notifications</span>
-                <span class="relative h-6 w-10 rounded-full transition-colors" [class]="c.isMuted ? 'bg-zinc-300 dark:bg-zinc-600' : 'bg-brand-600'">
-                  <span class="absolute top-0.5 size-5 rounded-full bg-white shadow transition-all" [class]="c.isMuted ? 'left-0.5' : 'left-[18px]'"></span>
+                <span
+                  class="relative h-6 w-10 rounded-full transition-colors"
+                  [class]="c.isMuted ? 'bg-zinc-300 dark:bg-zinc-600' : 'bg-brand-600'"
+                >
+                  <span
+                    class="absolute top-0.5 size-5 rounded-full bg-white shadow transition-all"
+                    [class]="c.isMuted ? 'left-0.5' : 'left-[18px]'"
+                  ></span>
                 </span>
               </button>
             </section>
@@ -169,7 +251,11 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
                   {{ c.type === 'channel' ? 'Subscribers' : 'Members' }} ({{ c.memberCount }})
                 </h4>
                 @if (canEdit()) {
-                  <button type="button" class="flex items-center gap-1 text-sm font-medium text-brand-600 hover:underline dark:text-brand-400" (click)="addMembers()">
+                  <button
+                    type="button"
+                    class="flex items-center gap-1 text-sm font-medium text-brand-600 hover:underline dark:text-brand-400"
+                    (click)="addMembers()"
+                  >
                     <svg lucideUserPlus class="size-4"></svg> Add
                   </button>
                 }
@@ -177,27 +263,61 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
               <ul>
                 @for (m of members(); track m.user.id) {
                   <li class="flex items-center gap-3 px-5 py-2 hover:bg-subtle">
-                    <button type="button" class="flex min-w-0 flex-1 items-center gap-3 text-left" (click)="openUser(m.user.id)">
-                      <app-avatar [id]="m.user.id" [name]="m.user.displayName" [hasAvatar]="m.user.hasAvatar" [size]="40" [online]="presence.isOnline(m.user.id)" />
+                    <button
+                      type="button"
+                      class="flex min-w-0 flex-1 items-center gap-3 text-left"
+                      (click)="openUser(m.user.id)"
+                    >
+                      <app-avatar
+                        [id]="m.user.id"
+                        [name]="m.user.displayName"
+                        [hasAvatar]="m.user.hasAvatar"
+                        [size]="40"
+                        [online]="presence.isOnline(m.user.id)"
+                      />
                       <span class="min-w-0 flex-1">
-                        <span class="block truncate text-sm font-medium">{{ m.user.displayName }}@if (m.user.id === me()?.id) { <span class="text-muted"> (you)</span> }</span>
-                        <span class="block truncate text-xs text-muted">{{ presence.isOnline(m.user.id) ? 'online' : '@' + m.user.userName }}</span>
+                        <span class="block truncate text-sm font-medium"
+                          >{{ m.user.displayName }}
+                          @if (m.user.id === me()?.id) {
+                            <span class="text-muted"> (you)</span>
+                          }
+                        </span>
+                        <span class="block truncate text-xs text-muted">{{
+                          presence.isOnline(m.user.id) ? 'online' : '@' + m.user.userName
+                        }}</span>
                       </span>
                     </button>
                     @if (m.role === 'owner' || m.role === 'admin') {
-                      <span class="flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700 dark:bg-brand-950 dark:text-brand-300">
-                        @if (m.role === 'owner') { <svg lucideCrown class="size-3"></svg> } @else { <svg lucideShield class="size-3"></svg> }
+                      <span
+                        class="flex items-center gap-1 rounded-full bg-brand-50 px-2 py-0.5 text-[11px] font-medium text-brand-700 dark:bg-brand-950 dark:text-brand-300"
+                      >
+                        @if (m.role === 'owner') {
+                          <svg lucideCrown class="size-3"></svg>
+                        } @else {
+                          <svg lucideShield class="size-3"></svg>
+                        }
                         {{ roleLabel[m.role] }}
                       </span>
                     }
                     @if (memberActions(m).length) {
-                      <button type="button" class="icon-btn size-8" [attr.aria-label]="'Actions for ' + m.user.displayName" [cdkMenuTriggerFor]="memberMenu">
+                      <button
+                        type="button"
+                        class="icon-btn size-8"
+                        [attr.aria-label]="'Actions for ' + m.user.displayName"
+                        [cdkMenuTriggerFor]="memberMenu"
+                      >
                         <svg lucideEllipsisVertical class="size-4"></svg>
                       </button>
                       <ng-template #memberMenu>
                         <div cdkMenu class="menu">
                           @for (action of memberActions(m); track action.label) {
-                            <button cdkMenuItem class="menu-item" [class.text-red-600]="action.danger" [class.dark:text-red-400]="action.danger" (cdkMenuItemTriggered)="action.run()">
+                            <button
+                              cdkMenuItem
+                              class="menu-item"
+                              [class.text-red-600]="action.danger"
+                              [class.dark:text-red-400]="action.danger"
+                              (cdkMenuItemTriggered)="action.run()"
+                            >
                               {{ action.label }}
                             </button>
                           }
@@ -209,10 +329,19 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
               </ul>
               @if (membersCursor()) {
                 <div class="px-5 py-2">
-                  <button type="button" class="btn-ghost w-full" [disabled]="membersLoading()" (click)="loadMembers(false)">Show more</button>
+                  <button
+                    type="button"
+                    class="btn-ghost w-full"
+                    [disabled]="membersLoading()"
+                    (click)="loadMembers(false)"
+                  >
+                    Show more
+                  </button>
                 </div>
               } @else if (membersLoading()) {
-                <div class="flex justify-center py-3 text-muted"><svg lucideLoaderCircle class="size-5 animate-spin"></svg></div>
+                <div class="flex justify-center py-3 text-muted">
+                  <svg lucideLoaderCircle class="size-5 animate-spin"></svg>
+                </div>
               }
             </section>
           }
@@ -220,11 +349,19 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
           <!-- Danger zone -->
           @if (c.myRole && c.type !== 'direct') {
             <section class="border-t border-line px-2 py-2">
-              <button type="button" class="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40" (click)="leave()">
+              <button
+                type="button"
+                class="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
+                (click)="leave()"
+              >
                 <svg lucideLogOut class="size-5"></svg> Leave {{ c.type }}
               </button>
               @if (c.myRole === 'owner') {
-                <button type="button" class="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40" (click)="deleteChat()">
+                <button
+                  type="button"
+                  class="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
+                  (click)="deleteChat()"
+                >
                   <svg lucideTrash class="size-5"></svg> Delete {{ c.type }}
                 </button>
               }
@@ -232,7 +369,9 @@ const ROLE_LABEL: Record<ChatMemberRole, string> = {
           }
         </div>
       } @else {
-        <div class="flex flex-1 items-center justify-center text-muted"><svg lucideLoaderCircle class="size-6 animate-spin"></svg></div>
+        <div class="flex flex-1 items-center justify-center text-muted">
+          <svg lucideLoaderCircle class="size-6 animate-spin"></svg>
+        </div>
       }
     </aside>
   `,
@@ -321,7 +460,9 @@ export class ChatInfoPanel {
     }
   }
 
-  protected memberActions(m: ChatMemberDto): { label: string; danger?: boolean; run: () => void }[] {
+  protected memberActions(
+    m: ChatMemberDto,
+  ): { label: string; danger?: boolean; run: () => void }[] {
     const chat = this.chat();
     const myRole = chat?.myRole;
     if (!chat || m.user.id === this.me()?.id || m.role === 'owner') {
@@ -333,12 +474,22 @@ export class ChatInfoPanel {
       if (m.role !== 'admin') {
         actions.push({ label: 'Make admin', run: () => void this.setRole(m, 'admin') });
       } else {
-        actions.push({ label: `Make ${ROLE_LABEL[baseRole].toLowerCase()}`, run: () => void this.setRole(m, baseRole) });
+        actions.push({
+          label: `Make ${ROLE_LABEL[baseRole].toLowerCase()}`,
+          run: () => void this.setRole(m, baseRole),
+        });
       }
       actions.push({ label: 'Transfer ownership', run: () => void this.transfer(m) });
     }
-    if (myRole === 'owner' || (myRole === 'admin' && (m.role === 'member' || m.role === 'subscriber'))) {
-      actions.push({ label: `Remove from ${chat.type}`, danger: true, run: () => void this.removeMember(m) });
+    if (
+      myRole === 'owner' ||
+      (myRole === 'admin' && (m.role === 'member' || m.role === 'subscriber'))
+    ) {
+      actions.push({
+        label: `Remove from ${chat.type}`,
+        danger: true,
+        run: () => void this.removeMember(m),
+      });
     }
     return actions;
   }

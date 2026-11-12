@@ -95,7 +95,9 @@ export class TimeAgoPipe implements PipeTransform {
 @Pipe({ name: 'clock' })
 export class ClockPipe implements PipeTransform {
   transform(value: string | null | undefined): string {
-    return value ? new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    return value
+      ? new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : '';
   }
 }
 

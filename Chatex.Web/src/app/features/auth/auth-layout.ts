@@ -12,7 +12,9 @@ import { ICONS } from '../../shared/ui/icons';
     >
       <div class="w-full max-w-md">
         <div class="mb-8 flex flex-col items-center gap-3 text-center">
-          <span class="flex size-14 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-lg shadow-brand-600/30">
+          <span
+            class="flex size-14 items-center justify-center rounded-2xl bg-brand-600 text-white shadow-lg shadow-brand-600/30"
+          >
             <svg lucideMessagesSquare class="size-7"></svg>
           </span>
           <h1 class="text-2xl font-bold tracking-tight">{{ heading() }}</h1>

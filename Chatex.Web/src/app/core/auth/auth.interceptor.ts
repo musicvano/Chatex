@@ -5,7 +5,12 @@ import { catchError, from, switchMap, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
 
 /** Auth routes that don't take a bearer token (the refresh cookie is enough, or nothing is). */
-const ANONYMOUS = ['/api/auth/register', '/api/auth/login', '/api/auth/refresh', '/api/auth/logout'];
+const ANONYMOUS = [
+  '/api/auth/register',
+  '/api/auth/login',
+  '/api/auth/refresh',
+  '/api/auth/logout',
+];
 
 function withToken(req: HttpRequest<unknown>, token: string | null): HttpRequest<unknown> {
   return token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
@@ -37,7 +42,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       }
       // Another request may already have refreshed the session while this one was in flight.
       const current = auth.accessToken();
-      const retryToken = current && current !== sentToken ? Promise.resolve(current) : auth.refresh();
+      const retryToken =
+        current && current !== sentToken ? Promise.resolve(current) : auth.refresh();
       return from(retryToken).pipe(
         switchMap((token) => {
           if (!token) {
