@@ -1,0 +1,115 @@
+# Production deploy: CI, then package the API, the migration bundle and the web app,
+# then (after approval on the "production" environment) copy them to the server and activate.
+# Server setup and the required secrets are described in Docs/Deployment.md.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+
+  package:
+    name: Package
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: Chatex.Web/package-lock.json
+
+      - name: Publish API
+        run: dotnet publish Chatex.Api -c Release -r linux-x64 --self-contained false -o release/api
+
+      - name: Build migration bundle
+        run: |
+          dotnet tool restore
+          dotnet ef migrations bundle --project Chatex.DataAccess --configuration Release -r linux-x64 -o release/efbundle
+
+      - name: Build web app
+        working-directory: Chatex.Web
+        run: |
+          npm ci
+          npm run build
+          cp -r dist/chatex/browser ../release/web
+
+      - name: Add release metadata
+        run: |
+          echo "${{ github.sha }}" > release/REVISION
+          cp deploy/activate-release.sh release/
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: chatex-release
+          path: release/
+          retention-days: 14
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: ${{ vars.PUBLIC_URL }}
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      RELEASE: ${{ github.sha }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: chatex-release
+          path: release
+
+      - name: Set up SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host deploy-target\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n  StrictHostKeyChecking yes\n' \
+            "$SSH_HOST" "$SSH_USER" > ~/.ssh/config
+
+      # Uploads go to incoming/; chatex-activate moves them into releases/.
+      - name: Upload release
+        run: rsync -rltz --delete --chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r release/ "deploy-target:/opt/chatex/incoming/$RELEASE/"
+
+      - name: Activate release
+        run: |
+          # RELEASE is meant to expand on the runner.
+          # shellcheck disable=SC2029
+          ssh deploy-target sudo /usr/local/bin/chatex-activate "$RELEASE"
+
+      - name: Smoke test
+        env:
+          PUBLIC_URL: ${{ vars.PUBLIC_URL }}
+        run: curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors "$PUBLIC_URL/health"

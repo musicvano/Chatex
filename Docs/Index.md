@@ -12,3 +12,4 @@
 | [Realtime](Realtime.md) | the SignalR hub, events, presence, reconnects |
 | [Frontend](Frontend.md) | the Angular app: layouts, session, realtime, source layout, build |
 | [Testing](Testing.md) | backend and frontend tests, running a single test |
+| [Deployment](Deployment.md) | setting up the server as root, deploying with GitHub Actions or by hand, rollback |

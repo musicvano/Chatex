@@ -8,10 +8,10 @@
 - PostgreSQL 18 (local install or Docker)
 - Docker Desktop, for the tests
 - Node.js 24 or later with npm, for the frontend
-- The EF Core CLI:
+- The EF Core CLI, pinned in `dotnet-tools.json` (run from the repository root):
 
 ```bash
-dotnet tool install --global dotnet-ef
+dotnet tool restore
 ```
 
 ## Configure
