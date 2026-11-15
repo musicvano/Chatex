@@ -30,7 +30,7 @@ A web messenger with direct chats, groups and channels. The backend is ASP.NET C
 | Validation | FluentValidation                                                                                                     |
 | Tests      | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn, WebApplicationFactory                                      |
 | Frontend   | Angular 22 (standalone, signals, zoneless), Tailwind CSS v4, Angular CDK, `@microsoft/signalr`, Lucide icons, Vitest |
-| CI/CD      | GitHub Actions, Dependabot; deploys to Nginx + systemd on Ubuntu ([Deployment](Docs/Deployment.md))                  |
+| CI/CD      | GitHub Actions; deploys to Nginx + systemd on Ubuntu ([Deployment](Docs/Deployment.md))                              |
 | Planned    | Playwright end-to-end tests                                                                                          |
 
 ## Quick start
