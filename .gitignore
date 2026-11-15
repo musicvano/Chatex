@@ -29,6 +29,7 @@ node_modules/
 dist/
 .angular/
 out-tsc/
+__screenshots__/
 npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*

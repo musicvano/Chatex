@@ -13,11 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Chatex.Api;
 
-public static class ApiServiceCollectionExtensions
+public static class DependencyInjection
 {
-    /// <summary>The name of the bearer scheme in the OpenAPI document.</summary>
-    public const string BearerSchemeName = "Bearer";
-
     /// <summary>
     /// Registers what the HTTP layer needs on top of <c>AddBusiness</c>: JSON, JWT auth, ProblemDetails, OpenAPI and
     /// the SignalR hub. Call it before <c>AddBusiness</c> so the SignalR <see cref="IChatNotifier"/> wins.

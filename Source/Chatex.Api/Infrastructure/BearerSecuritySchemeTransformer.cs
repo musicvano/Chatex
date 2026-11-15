@@ -10,11 +10,14 @@ namespace Chatex.Api.Infrastructure;
 /// </summary>
 internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransformer, IOpenApiOperationTransformer
 {
+    /// <summary>The name of the bearer scheme in the OpenAPI document.</summary>
+    public const string SchemeName = "Bearer";
+
     public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
         document.Components ??= new OpenApiComponents();
         document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
-        document.Components.SecuritySchemes[ApiServiceCollectionExtensions.BearerSchemeName] = new OpenApiSecurityScheme
+        document.Components.SecuritySchemes[SchemeName] = new OpenApiSecurityScheme
         {
             Type = SecuritySchemeType.Http,
             Scheme = "bearer",
@@ -36,7 +39,7 @@ internal sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransfor
         operation.Security ??= [];
         operation.Security.Add(new OpenApiSecurityRequirement
         {
-            [new OpenApiSecuritySchemeReference(ApiServiceCollectionExtensions.BearerSchemeName, context.Document)] = [],
+            [new OpenApiSecuritySchemeReference(SchemeName, context.Document)] = [],
         });
         return Task.CompletedTask;
     }

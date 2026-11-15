@@ -1,6 +1,7 @@
 using Chatex.Api;
 using Chatex.Api.Endpoints;
 using Chatex.Api.Hubs;
+using Chatex.Api.Infrastructure;
 using Chatex.Business;
 using Scalar.AspNetCore;
 
@@ -22,7 +23,7 @@ app.UseAuthorization();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference(o => o.AddPreferredSecuritySchemes(ApiServiceCollectionExtensions.BearerSchemeName));
+    app.MapScalarApiReference(o => o.AddPreferredSecuritySchemes(BearerSecuritySchemeTransformer.SchemeName));
 }
 
 app.MapGet("/health", () => Results.Ok()).AllowAnonymous().ExcludeFromDescription();
