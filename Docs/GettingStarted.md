@@ -7,11 +7,29 @@
 - [.NET SDK 10.0.403](https://dotnet.microsoft.com/download) or later in the 10.0 line
 - Docker Desktop, for the local database (`compose.yaml`) and the tests; a local PostgreSQL 18 also works
 - Node.js 24 or later with npm, for the frontend
+- PowerShell 7 (`pwsh`), for `Run.ps1`
 - The EF Core CLI, pinned in `dotnet-tools.json` (run from the repository root):
 
 ```bash
 dotnet tool restore
 ```
+
+## Run.ps1
+
+`Run.ps1` at the repository root wraps the commands on this page and in [Testing](Testing.md). Run it without arguments to list them:
+
+| Command                                | What it does                                                                                                |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `./Run.ps1 setup`                      | first run: restores tools and packages, starts PostgreSQL and applies the migrations                        |
+| `./Run.ps1 db`, `./Run.ps1 db-stop`    | starts PostgreSQL and applies the migrations; stops it (the data stays in its volume)                       |
+| `./Run.ps1 api`, `./Run.ps1 web`       | runs the API (port 5214) or the Angular dev server (port 4200)                                              |
+| `./Run.ps1 build`, `./Run.ps1 format`  | builds or formats the backend and the web app                                                               |
+| `./Run.ps1 test [dotnet test options]` | runs all tests; with options, only `dotnet test` with them, for example `--project Tests/Chatex.Core.Tests` |
+| `./Run.ps1 migration <Name>`           | adds an EF Core migration                                                                                   |
+| `./Run.ps1 check`                      | runs every CI check locally                                                                                 |
+| `./Run.ps1 clean`                      | deletes build output                                                                                        |
+
+The sections below show the commands it runs.
 
 ## Configure
 

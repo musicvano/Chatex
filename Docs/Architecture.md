@@ -48,6 +48,7 @@ global.json                       SDK pin, Microsoft Testing Platform runner
 Directory.Build.props             shared build settings (nullable, analyzers, warnings as errors, NuGet audit)
 Directory.Packages.props          central NuGet versions
 compose.yaml                      local PostgreSQL 18 for development
+Run.ps1                           developer commands (./Run.ps1 lists them)
 Source/
   Chatex.Api/                     web host: Endpoints, Hubs (SignalR, presence), Infrastructure (auth, errors, files, rate limiting), Maintenance, Contracts
   Chatex.Core/                    Auth, Users, Chats, Messages, Attachments, Common
