@@ -141,11 +141,17 @@ dotnet publish Source/Chatex.Api -c Release -r linux-x64 --self-contained false 
 ```
 
 ```bash
-dotnet tool restore && dotnet ef migrations bundle --project Source/Chatex.Data -c Release -r linux-x64 -o release/efbundle --force
+dotnet tool restore && dotnet ef migrations bundle --project Source/Chatex.Data --configuration Release -r linux-x64 -o release/efbundle --force
 ```
+
+`dotnet ef` needs the long `--configuration`: its `-c` is short for `--context`.
 
 ```bash
 npm --prefix Source/Chatex.Web ci && npm --prefix Source/Chatex.Web run build && cp -r Source/Chatex.Web/dist/chatex/browser release/web
+```
+
+```bash
+git rev-parse HEAD > release/REVISION
 ```
 
 Then upload and activate it. The release name must be a commit hash, so use the output of `git rev-parse --short HEAD`:

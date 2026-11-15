@@ -34,7 +34,9 @@ readonly SHA="$1"
 
 readonly SRC="$INCOMING/$SHA"
 readonly DST="$RELEASES/$SHA"
-PREVIOUS="$(readlink -f "$CURRENT" 2>/dev/null || true)"
+# Empty on the first deploy: -e (unlike -f) prints nothing when the current link does not exist yet,
+# so a failed first release is not "rolled back" to a link that points to itself.
+PREVIOUS="$(readlink -e "$CURRENT" 2>/dev/null || true)"
 readonly PREVIOUS
 
 # 1. Move the upload into releases/ and make it read-only for the service user.

@@ -58,7 +58,7 @@ Specs sit next to the code (`*.spec.ts`); shared fakes are in `src/testing/fakes
 
 ## Continuous integration
 
-[`ci.yml`](../.github/workflows/ci.yml) runs on every pull request and push to `dev`, and before each deploy. It checks formatting (`dotnet format --verify-no-changes`, `npm run format:check`), builds in Release, checks that every model change has a migration, runs all backend tests (Docker is available on the runner) and the frontend lint, tests and production build. See [Deployment](Deployment.md#pipeline).
+[`ci.yml`](../.github/workflows/ci.yml) runs on every pull request and push to `dev`, and before each deploy. It checks formatting (`dotnet format --verify-no-changes`, `npm run format:check`), builds in Release, checks that every model change has a migration, runs all backend tests (Docker is available on the runner) and the frontend lint, tests and production build. See [Deployment](Deployment.md#deploy-with-github-actions).
 
 ## Planned
 
