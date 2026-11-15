@@ -8,7 +8,7 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // AddApi first: its SignalR IChatNotifier must be registered before AddBusiness falls back to the no-op one.
-builder.Services.AddApi();
+builder.Services.AddApi(builder.Configuration);
 builder.Services.AddBusiness(builder.Configuration);
 
 var app = builder.Build();
@@ -27,7 +27,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(o => o.AddPreferredSecuritySchemes(BearerSecuritySchemeTransformer.SchemeName));
 }
 
-app.MapGet("/health", () => Results.Ok()).AllowAnonymous().ExcludeFromDescription();
+// Readiness: 200 when the API can reach the database, 503 otherwise (the deploy rolls back on 503).
+app.MapHealthChecks("/health").AllowAnonymous();
 
 var api = app.MapGroup("/api").RequireAuthorization();
 api.MapAuthEndpoints();

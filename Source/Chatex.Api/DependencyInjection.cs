@@ -2,9 +2,11 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chatex.Api.Hubs;
 using Chatex.Api.Infrastructure;
+using Chatex.Api.Maintenance;
 using Chatex.Business.Abstractions;
 using Chatex.Business.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.SignalR;
@@ -22,10 +24,25 @@ public static class DependencyInjection
     /// <summary>
     /// Registers what the HTTP layer needs on top of <c>AddBusiness</c>: JSON, JWT auth, ProblemDetails, OpenAPI and
     /// the SignalR hub. Call it before <c>AddBusiness</c> so the SignalR <see cref="IChatNotifier"/> wins.
-    /// Reads the optional <c>Presence</c> and <c>RateLimiting</c> sections.
+    /// Reads the optional <c>Presence</c>, <c>RateLimiting</c> and <c>Maintenance</c> sections and
+    /// <c>DataProtection:KeysPath</c>.
     /// </summary>
-    public static IServiceCollection AddApi(this IServiceCollection services)
+    public static IServiceCollection AddApi(this IServiceCollection services, IConfiguration configuration)
     {
+        // Without a key folder the keys live in memory and change on every restart. Nothing persistent depends on
+        // them yet, but Identity tokens (password reset, email confirmation) will.
+        var dataProtection = services.AddDataProtection().SetApplicationName("Chatex");
+        if (configuration["DataProtection:KeysPath"] is { Length: > 0 } keysPath)
+        {
+            dataProtection.PersistKeysToFileSystem(new DirectoryInfo(keysPath));
+        }
+
+        services.AddOptions<MaintenanceOptions>()
+            .BindConfiguration(MaintenanceOptions.Section)
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
+        services.AddHostedService<MaintenanceService>();
+
         // JSON bodies are small; the upload endpoints raise this per request (FileUploadExtensions.AcceptsFileUpTo).
         services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = MaxRequestBodyBytes);
 

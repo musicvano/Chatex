@@ -46,9 +46,16 @@ public static class DependencyInjection
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<IAttachmentRepository, AttachmentRepository>();
 
+        // Readiness: /health answers 503 while the database cannot be reached.
+        services.AddHealthChecks().AddCheck<DatabaseHealthCheck>("database", timeout: TimeSpan.FromSeconds(5));
+
         return services;
     }
 
+    /// <summary>
+    /// Transient failures (a dropped connection, a failover) are retried. Explicit transactions must go through
+    /// <see cref="IUnitOfWork.ExecuteInTransactionAsync{T}"/>, which replays the whole unit of work on a retry.
+    /// </summary>
     internal static void Configure(DbContextOptionsBuilder options, string connectionString) =>
-        options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+        options.UseNpgsql(connectionString, npgsql => npgsql.EnableRetryOnFailure()).UseSnakeCaseNamingConvention();
 }

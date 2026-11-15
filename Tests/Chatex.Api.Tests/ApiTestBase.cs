@@ -52,6 +52,7 @@ public abstract class ApiTestBase(PostgresFixture fixture) : IAsyncLifetime
                 .UseSetting("Storage:RootPath", _storageRoot)
                 .UseSetting("Attachments:MaxBytes", MaxAttachmentBytes.ToString())
                 .UseSetting("Presence:OfflineGraceSeconds", "0")
+                .UseSetting("Maintenance:Enabled", "false")
                 // Every test client shares one (unknown) IP, so the auth throttle would trip across tests.
                 .UseSetting("RateLimiting:AuthPermitLimit", "1000000");
             ConfigureHost(builder);

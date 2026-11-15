@@ -120,6 +120,22 @@ public sealed class AuthServiceTests(PostgresFixture fixture) : BusinessTestBase
     }
 
     [Fact]
+    public async Task Stale_refresh_tokens_are_deleted_only_after_a_full_lifetime()
+    {
+        var first = await RegisterAsync("alice");
+        var second = (await Auth(s => s.RefreshAsync(new RefreshCommand(first.RefreshToken), ClientInfo.Unknown, Ct))).ShouldSucceed();
+
+        // The retired token is kept, so replaying it is still caught as theft.
+        (await Auth(s => s.DeleteStaleRefreshTokensAsync(Ct))).ShouldBe(0);
+
+        Time.Advance(TimeSpan.FromDays(61));
+        (await Auth(s => s.DeleteStaleRefreshTokensAsync(Ct))).ShouldBe(2);
+        var result = await Auth(s => s.RefreshAsync(new RefreshCommand(second.RefreshToken), ClientInfo.Unknown, Ct));
+
+        result.ShouldFail(ErrorKind.Unauthorized, "invalid_refresh_token");
+    }
+
+    [Fact]
     public async Task Logout_ends_the_session()
     {
         var session = await RegisterAsync("alice");

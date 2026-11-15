@@ -3,8 +3,9 @@
 #
 # Install once as root (see Docs/Deployment.md):
 #   install -o root -g root -m 755 Deploy/activate-release.sh /usr/local/bin/chatex-activate
-# The deploy user may run only this command through sudo. It must stay root-owned and outside
-# anything the deploy user can write, otherwise sudo on it would grant root.
+# The deploy workflow connects as root (Docs/Deployment.md) and calls it through sudo, which also works for a
+# dedicated deploy user allowed only this command in sudoers. Keep it root-owned and outside anything that user
+# can write, otherwise sudo on it would grant root.
 #
 # Usage: chatex-activate <git sha>
 #   - If /opt/chatex/incoming/<sha> exists (uploaded by the deploy workflow), it becomes

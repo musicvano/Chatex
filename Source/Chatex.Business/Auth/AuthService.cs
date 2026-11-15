@@ -26,6 +26,12 @@ public interface IAuthService
 
     /// <summary>Ends every session of the user.</summary>
     Task<Result> LogoutAllAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Deletes refresh tokens that expired or were revoked more than one refresh token lifetime ago; returns how many.
+    /// Revoked tokens stay that long so a stolen token that comes back still signs the user out everywhere.
+    /// </summary>
+    Task<int> DeleteStaleRefreshTokensAsync(CancellationToken cancellationToken = default);
 }
 
 internal sealed class AuthService(
@@ -145,6 +151,9 @@ internal sealed class AuthService(
         await refreshTokens.RevokeAllForUserAsync(userId, timeProvider.GetUtcNow(), cancellationToken);
         return Result.Success;
     }
+
+    public Task<int> DeleteStaleRefreshTokensAsync(CancellationToken cancellationToken = default) =>
+        refreshTokens.DeleteStaleAsync(timeProvider.GetUtcNow() - jwtOptions.Value.RefreshTokenLifetime, cancellationToken);
 
     /// <summary>Stores a new refresh token (linking it from <paramref name="replaces"/>), saves, and returns both tokens.</summary>
     private async Task<AuthResult> IssueTokensAsync(

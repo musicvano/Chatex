@@ -25,7 +25,8 @@ KillSignal=SIGINT
 TimeoutStopSec=30
 SyslogIdentifier=chatex-api
 
-# Hardening: the release is read-only; only the uploads folder is writable.
+# Hardening: the release is read-only; only /var/lib/chatex (uploads, Data Protection keys) is writable.
+# AF_NETLINK lets .NET read network interface information; nothing else beyond TCP and Unix sockets is allowed.
 NoNewPrivileges=true
 PrivateTmp=true
 PrivateDevices=true
@@ -37,6 +38,11 @@ ProtectKernelModules=true
 ProtectControlGroups=true
 RestrictSUIDSGID=true
 LockPersonality=true
+ProtectClock=true
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+CapabilityBoundingSet=
+UMask=0027
 
 [Install]
 WantedBy=multi-user.target

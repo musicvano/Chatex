@@ -78,14 +78,17 @@ internal sealed class MessageService(
             Body = command.Body?.Trim() ?? "",
             ReplyToMessageId = command.ReplyToMessageId,
         };
-        messages.Add(message);
-        foreach (var attachment in pending)
-        {
-            attachment.MessageId = message.Id;
-        }
-
         await unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
+            // Track everything inside the transaction: a retried transaction starts from a cleared change tracker
+            // and replays only this lambda. On the first run the query returns the already tracked attachments.
+            messages.Add(message);
+            var toLink = attachmentIds.Count == 0 ? pending : await attachments.GetPendingAsync(userId, attachmentIds, ct);
+            foreach (var attachment in toLink)
+            {
+                attachment.MessageId = message.Id;
+            }
+
             await unitOfWork.SaveChangesAsync(ct);
             await chats.TouchAsync(chatId, message.CreatedAt, ct);
         }, cancellationToken);
