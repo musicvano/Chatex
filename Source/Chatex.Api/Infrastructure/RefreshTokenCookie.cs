@@ -1,4 +1,4 @@
-using Chatex.Business.Auth;
+using Chatex.Core.Auth;
 
 namespace Chatex.Api.Infrastructure;
 

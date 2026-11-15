@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Chatex.Api.Contracts;
 using Chatex.Api.Infrastructure;
-using Chatex.Business.Auth;
-using Chatex.Business.Common;
+using Chatex.Core.Auth;
+using Chatex.Core.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Chatex.Api.Endpoints;

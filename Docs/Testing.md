@@ -13,11 +13,11 @@ dotnet test --solution Chatex.slnx
 One project, one class or matching methods:
 
 ```bash
-dotnet test --project Tests/Chatex.Business.Tests
+dotnet test --project Tests/Chatex.Core.Tests
 ```
 
 ```bash
-dotnet test --project Tests/Chatex.Business.Tests --filter-class "*ChatServiceTests"
+dotnet test --project Tests/Chatex.Core.Tests --filter-class "*ChatServiceTests"
 ```
 
 ```bash
@@ -26,12 +26,12 @@ dotnet test --project Tests/Chatex.Api.Tests --filter-method "*Refresh*"
 
 ### Test projects
 
-| Project                   | What it tests                                                                                                     | Base class         |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------ |
-| `Chatex.Testing`          | shared `PostgresFixture` (one `postgres:18-alpine` container per test assembly, Respawn reset) and `DatabaseTest` | —                  |
-| `Chatex.DataAccess.Tests` | repositories, keyset SQL, file storage, unit of work                                                              | `DbTestBase`       |
-| `Chatex.Business.Tests`   | services through the full DI graph                                                                                | `BusinessTestBase` |
-| `Chatex.Api.Tests`        | HTTP endpoints and the SignalR hub on the real app                                                                | `ApiTestBase`      |
+| Project             | What it tests                                                                                                     | Base class         |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------ |
+| `Chatex.Testing`    | shared `PostgresFixture` (one `postgres:18-alpine` container per test assembly, Respawn reset) and `DatabaseTest` | —                  |
+| `Chatex.Data.Tests` | repositories, keyset SQL, file storage, unit of work                                                              | `DbTestBase`       |
+| `Chatex.Core.Tests` | services through the full DI graph                                                                                | `BusinessTestBase` |
+| `Chatex.Api.Tests`  | HTTP endpoints and the SignalR hub on the real app                                                                | `ApiTestBase`      |
 
 The tests use a real PostgreSQL, never an in-memory provider or SQLite, because the keyset queries must run on the real database. All tests in an assembly share one database, so parallel runs are turned off in `Tests/xunit.runner.json`. `Tests/Directory.Build.props` gives every `*.Tests` project that file, the xUnit and Shouldly packages, the `Chatex.Testing` reference and the global usings, so a test csproj lists only what it tests.
 

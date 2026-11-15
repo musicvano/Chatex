@@ -1,6 +1,6 @@
-using Chatex.Business.Auth;
-using Chatex.Business.Users;
-using Chatex.DataAccess.Entities;
+using Chatex.Core.Auth;
+using Chatex.Core.Users;
+using Chatex.Data.Entities;
 
 namespace Chatex.Api.Contracts;
 

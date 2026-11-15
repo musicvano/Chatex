@@ -1,5 +1,5 @@
 using System.Threading.Channels;
-using Chatex.Business.Messages;
+using Chatex.Core.Messages;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Chatex.Api.Tests;

@@ -2,7 +2,7 @@
 
 [← Docs index](Index.md)
 
-Chats work like Telegram's. The rules live in `Source/Chatex.Business/Chats` (`ChatPermissions`, `ChatAccess`, `ChatService`) and `ChatMember.CanPost`.
+Chats work like Telegram's. The rules live in `Source/Chatex.Core/Chats` (`ChatPermissions`, `ChatAccess`, `ChatService`) and `ChatMember.CanPost`.
 
 ## Chat types
 

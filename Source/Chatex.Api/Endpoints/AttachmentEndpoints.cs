@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using Chatex.Api.Infrastructure;
-using Chatex.Business.Attachments;
+using Chatex.Core.Attachments;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Options;
 

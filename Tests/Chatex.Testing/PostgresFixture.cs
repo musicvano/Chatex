@@ -1,4 +1,4 @@
-using Chatex.DataAccess;
+using Chatex.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -25,7 +25,7 @@ public sealed class PostgresFixture : IAsyncLifetime
 
         var services = new ServiceCollection();
         services.AddLogging();
-        services.AddDataAccess(ConnectionString, o => o.RootPath = Path.GetTempPath());
+        services.AddData(ConnectionString, o => o.RootPath = Path.GetTempPath());
         await using (var provider = services.BuildServiceProvider())
         await using (var scope = provider.CreateAsyncScope())
         {

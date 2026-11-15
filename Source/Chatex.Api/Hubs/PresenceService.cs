@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations;
-using Chatex.Business.Chats;
-using Chatex.Business.Users;
+using Chatex.Core.Chats;
+using Chatex.Core.Users;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 

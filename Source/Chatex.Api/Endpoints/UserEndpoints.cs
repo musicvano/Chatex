@@ -1,5 +1,5 @@
 using Chatex.Api.Infrastructure;
-using Chatex.Business.Users;
+using Chatex.Core.Users;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Chatex.Api.Endpoints;

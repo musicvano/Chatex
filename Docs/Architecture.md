@@ -9,9 +9,9 @@ The backend has three layers. Each one only references the layer below it.
 ```
 Chatex.Api          Presentation: HTTP endpoints, auth, problem details, SignalR hub
    │
-Chatex.Business     Business logic: services, rules and permissions, validation, DTOs
+Chatex.Core         Business logic: services, rules and permissions, validation, DTOs
    │
-Chatex.DataAccess   Data access: EF Core entities, repositories, unit of work, migrations, file storage
+Chatex.Data         Data access: EF Core entities, repositories, unit of work, migrations, file storage
 ```
 
 - Services return `Result<T>` for expected failures (`Validation`, `NotFound`, `Forbidden`, `Conflict`, `Unauthorized`) and throw only on bugs. The Api turns failures into problem details; see [error codes](HttpApi.md#error-codes).
@@ -30,11 +30,11 @@ Chatex.DataAccess   Data access: EF Core entities, repositories, unit of work, m
 
 ## Service registration
 
-Each layer has a `DependencyInjection` class with one extension method: `AddApi`, `AddBusiness` and `AddDataAccess`. `Program.cs` calls `AddApi()` before `AddBusiness()`. `AddApi` registers the SignalR `IChatNotifier`; `AddBusiness` registers the no-op `NullChatNotifier` only if no notifier exists yet. `AddBusiness` also registers the data access layer and validates the `Jwt`, `Attachments` and `Storage` settings on startup.
+Each layer has a `DependencyInjection` class with one extension method: `AddApi`, `AddCore` and `AddData`. `Program.cs` calls `AddApi()` before `AddCore()`. `AddApi` registers the SignalR `IChatNotifier`; `AddCore` registers the no-op `NullChatNotifier` only if no notifier exists yet. `AddCore` also registers the data access layer and validates the `Jwt`, `Attachments` and `Storage` settings on startup.
 
 ## Running in production
 
-- **Health.** `/health` runs `SELECT 1` on a plain connection (`DatabaseHealthCheck` in DataAccess), so it answers 503 within seconds when the database is gone. The deploy uses it to decide on rollback.
+- **Health.** `/health` runs `SELECT 1` on a plain connection (`DatabaseHealthCheck` in Chatex.Data), so it answers 503 within seconds when the database is gone. The deploy uses it to decide on rollback.
 - **Retries.** EF Core retries transient database failures. Explicit transactions go through `IUnitOfWork.ExecuteInTransactionAsync`, which replays the whole lambda on a retry, so everything a transaction saves must be tracked inside that lambda.
 - **Maintenance.** `MaintenanceService` (Api, a hosted service) runs hourly. It deletes uploads that were never sent with a message and refresh tokens that have been expired or revoked for a full token lifetime.
 - **Rate limiting.** `/api/auth` is throttled per client IP (`Infrastructure/RateLimiting.cs`). Behind Nginx the IP comes from `X-Forwarded-For`.
@@ -50,14 +50,14 @@ Directory.Packages.props          central NuGet versions
 compose.yaml                      local PostgreSQL 18 for development
 Source/
   Chatex.Api/                     web host: Endpoints, Hubs (SignalR, presence), Infrastructure (auth, errors, files, rate limiting), Maintenance, Contracts
-  Chatex.Business/                Auth, Users, Chats, Messages, Attachments, Common
-  Chatex.DataAccess/              Entities, Configurations, Repositories, Migrations, Storage
+  Chatex.Core/                    Auth, Users, Chats, Messages, Attachments, Common
+  Chatex.Data/                    Entities, Configurations, Repositories, Migrations, Storage
   Chatex.Web/                     Angular app (see Frontend.md)
 Tests/
   Directory.Build.props           settings shared by the test projects, xunit.runner.json
   Chatex.Testing/                 shared PostgreSQL container fixture
-  Chatex.DataAccess.Tests/        repository and storage tests
-  Chatex.Business.Tests/          service tests through the full DI graph
+  Chatex.Data.Tests/              repository and storage tests
+  Chatex.Core.Tests/              service tests through the full DI graph
   Chatex.Api.Tests/               HTTP tests against the real app (WebApplicationFactory)
 Deploy/                           server files: systemd unit, Nginx site, settings template, activation script
 Docs/                             this documentation

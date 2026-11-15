@@ -39,4 +39,4 @@ The handshake finishes before the server has joined the groups. After connecting
 
 ## Adding an event
 
-Server events are raised by business services through `IChatNotifier` after a commit. A new event touches, in order: `IChatNotifier` and `NullChatNotifier` (Business), `IChatClient` and `SignalRChatNotifier` (Api), the `HubEvent` union in `Source/Chatex.Web/src/app/core/realtime/realtime.service.ts`, the stores that react to it, and the table above.
+Server events are raised by business services through `IChatNotifier` after a commit. A new event touches, in order: `IChatNotifier` and `NullChatNotifier` (Core), `IChatClient` and `SignalRChatNotifier` (Api), the `HubEvent` union in `Source/Chatex.Web/src/app/core/realtime/realtime.service.ts`, the stores that react to it, and the table above.

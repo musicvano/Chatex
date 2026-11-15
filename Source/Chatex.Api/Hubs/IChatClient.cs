@@ -1,4 +1,4 @@
-using Chatex.Business.Messages;
+using Chatex.Core.Messages;
 
 namespace Chatex.Api.Hubs;
 

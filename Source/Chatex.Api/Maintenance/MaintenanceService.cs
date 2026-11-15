@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using Chatex.Business.Attachments;
-using Chatex.Business.Auth;
+using Chatex.Core.Attachments;
+using Chatex.Core.Auth;
 using Microsoft.Extensions.Options;
 
 namespace Chatex.Api.Maintenance;

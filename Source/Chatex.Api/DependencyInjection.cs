@@ -3,8 +3,8 @@ using System.Text.Json.Serialization;
 using Chatex.Api.Hubs;
 using Chatex.Api.Infrastructure;
 using Chatex.Api.Maintenance;
-using Chatex.Business.Abstractions;
-using Chatex.Business.Auth;
+using Chatex.Core.Abstractions;
+using Chatex.Core.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -22,8 +22,8 @@ public static class DependencyInjection
     public const long MaxRequestBodyBytes = 1024 * 1024;
 
     /// <summary>
-    /// Registers what the HTTP layer needs on top of <c>AddBusiness</c>: JSON, JWT auth, ProblemDetails, OpenAPI and
-    /// the SignalR hub. Call it before <c>AddBusiness</c> so the SignalR <see cref="IChatNotifier"/> wins.
+    /// Registers what the HTTP layer needs on top of <c>AddCore</c>: JSON, JWT auth, ProblemDetails, OpenAPI and
+    /// the SignalR hub. Call it before <c>AddCore</c> so the SignalR <see cref="IChatNotifier"/> wins.
     /// Reads the optional <c>Presence</c>, <c>RateLimiting</c> and <c>Maintenance</c> sections and
     /// <c>DataProtection:KeysPath</c>.
     /// </summary>

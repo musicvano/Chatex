@@ -51,7 +51,7 @@ jobs:
         run: dotnet build Chatex.slnx -c Release --no-restore
 
       - name: Check for model changes without a migration
-        run: dotnet ef migrations has-pending-model-changes --project Source/Chatex.DataAccess --configuration Release --no-build
+        run: dotnet ef migrations has-pending-model-changes --project Source/Chatex.Data --configuration Release --no-build
 
       # Testcontainers starts PostgreSQL in the runner's Docker.
       - name: Test

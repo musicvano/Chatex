@@ -141,7 +141,7 @@ dotnet publish Source/Chatex.Api -c Release -r linux-x64 --self-contained false 
 ```
 
 ```bash
-dotnet tool restore && dotnet ef migrations bundle --project Source/Chatex.DataAccess -c Release -r linux-x64 -o release/efbundle --force
+dotnet tool restore && dotnet ef migrations bundle --project Source/Chatex.Data -c Release -r linux-x64 -o release/efbundle --force
 ```
 
 ```bash

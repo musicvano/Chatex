@@ -1,7 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Source\Chatex.DataAccess\Chatex.DataAccess.csproj" />
-  </ItemGroup>
-
-</Project>

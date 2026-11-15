@@ -55,7 +55,7 @@ jobs:
       - name: Build migration bundle
         run: |
           dotnet tool restore
-          dotnet ef migrations bundle --project Source/Chatex.DataAccess --configuration Release -r linux-x64 -o release/efbundle
+          dotnet ef migrations bundle --project Source/Chatex.Data --configuration Release -r linux-x64 -o release/efbundle
 
       - name: Build web app
         working-directory: Source/Chatex.Web

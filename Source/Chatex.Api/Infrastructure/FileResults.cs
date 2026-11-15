@@ -1,5 +1,5 @@
-using Chatex.Business.Attachments;
-using Chatex.Business.Common;
+using Chatex.Core.Attachments;
+using Chatex.Core.Common;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Net.Http.Headers;
 

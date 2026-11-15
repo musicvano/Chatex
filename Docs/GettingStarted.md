@@ -43,7 +43,7 @@ docker compose up -d
 `dotnet ef` reads the connection string from the `CHATEX_DB` environment variable and otherwise uses `Host=localhost;Database=chatex;Username=postgres;Password=postgres`.
 
 ```bash
-dotnet ef database update --project Source/Chatex.DataAccess
+dotnet ef database update --project Source/Chatex.Data
 ```
 
 ## Run the API

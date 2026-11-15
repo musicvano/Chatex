@@ -93,4 +93,4 @@ Passing both `before` and `after` is a validation error (`both_cursors`). Messag
 | `chat_full`                                                                                           | 409    | the group already has 1000 members                                            |
 | `too_many_requests`                                                                                   | 429    | too many requests to `/api/auth` from this IP; wait for `Retry-After` seconds |
 
-The codes come from the `*Errors` classes in `Chatex.Business`, except `too_many_requests`, which the Api's rate limiter sets (`Infrastructure/RateLimiting.cs`). Add new codes there and to this table.
+The codes come from the `*Errors` classes in `Chatex.Core`, except `too_many_requests`, which the Api's rate limiter sets (`Infrastructure/RateLimiting.cs`). Add new codes there and to this table.

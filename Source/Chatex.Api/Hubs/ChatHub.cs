@@ -1,6 +1,6 @@
 using Chatex.Api.Infrastructure;
-using Chatex.Business.Chats;
-using Chatex.Business.Users;
+using Chatex.Core.Chats;
+using Chatex.Core.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 

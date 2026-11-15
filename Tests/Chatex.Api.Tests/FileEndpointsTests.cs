@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using Chatex.Business.Attachments;
-using Chatex.Business.Chats;
-using Chatex.Business.Users;
+using Chatex.Core.Attachments;
+using Chatex.Core.Chats;
+using Chatex.Core.Users;
 
 namespace Chatex.Api.Tests;
 

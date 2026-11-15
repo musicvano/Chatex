@@ -1,5 +1,5 @@
-using Chatex.Business.Abstractions;
-using Chatex.Business.Messages;
+using Chatex.Core.Abstractions;
+using Chatex.Core.Messages;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Chatex.Api.Hubs;

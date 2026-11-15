@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using Chatex.Api.Contracts;
-using Chatex.Business.Users;
+using Chatex.Core.Users;
 
 namespace Chatex.Api.Tests;
 

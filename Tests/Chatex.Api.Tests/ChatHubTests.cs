@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using Chatex.Api.Contracts;
-using Chatex.Business.Chats;
-using Chatex.Business.Messages;
-using Chatex.Business.Users;
+using Chatex.Core.Chats;
+using Chatex.Core.Messages;
+using Chatex.Core.Users;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 

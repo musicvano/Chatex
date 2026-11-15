@@ -1,4 +1,4 @@
-using Chatex.Business.Common;
+using Chatex.Core.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Chatex.Api.Infrastructure;

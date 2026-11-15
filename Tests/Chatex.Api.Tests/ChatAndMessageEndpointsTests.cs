@@ -2,10 +2,10 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Chatex.Api.Contracts;
-using Chatex.Business.Chats;
-using Chatex.Business.Common;
-using Chatex.Business.Messages;
-using Chatex.DataAccess.Entities;
+using Chatex.Core.Chats;
+using Chatex.Core.Common;
+using Chatex.Core.Messages;
+using Chatex.Data.Entities;
 
 namespace Chatex.Api.Tests;
 

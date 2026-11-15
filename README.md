@@ -38,7 +38,7 @@ docker compose up -d
 ```
 
 ```bash
-dotnet ef database update --project Source/Chatex.DataAccess
+dotnet ef database update --project Source/Chatex.Data
 ```
 
 ```bash
