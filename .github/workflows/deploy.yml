@@ -60,7 +60,7 @@ jobs:
       - name: Add release metadata
         run: |
           echo "${{ github.sha }}" > release/REVISION
-          cp deploy/activate-release.sh release/
+          cp Deploy/activate-release.sh release/
 
       - uses: actions/upload-artifact@v7
         with:

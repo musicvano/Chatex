@@ -15,18 +15,18 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core, S
 
 ## Tech stack
 
-| Area | Choice |
-|---|---|
-| Runtime | .NET 10 (C# 14) |
-| Database | PostgreSQL 18, EF Core 10 with Npgsql, snake_case naming |
-| Api | Minimal APIs, ProblemDetails (RFC 9457), OpenAPI with Scalar |
-| Realtime | ASP.NET Core SignalR, in-memory presence (one process, no backplane) |
-| Auth | ASP.NET Core Identity, JWT bearer (HMAC-SHA256), refresh token in an HttpOnly cookie |
-| Validation | FluentValidation |
-| Tests | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn, WebApplicationFactory |
-| Frontend | Angular 22 (standalone, signals, zoneless), Tailwind CSS v4, Angular CDK, `@microsoft/signalr`, Lucide icons, Vitest |
-| CI/CD | GitHub Actions; deploys to Nginx + systemd on Ubuntu ([Deployment](Docs/Deployment.md)) |
-| Planned | Playwright |
+| Area       | Choice                                                                                                               |
+| ---------- | -------------------------------------------------------------------------------------------------------------------- |
+| Runtime    | .NET 10 (C# 14)                                                                                                      |
+| Database   | PostgreSQL 18, EF Core 10 with Npgsql, snake_case naming                                                             |
+| Api        | Minimal APIs, ProblemDetails (RFC 9457), OpenAPI with Scalar                                                         |
+| Realtime   | ASP.NET Core SignalR, in-memory presence (one process, no backplane)                                                 |
+| Auth       | ASP.NET Core Identity, JWT bearer (HMAC-SHA256), refresh token in an HttpOnly cookie                                 |
+| Validation | FluentValidation                                                                                                     |
+| Tests      | xUnit v3, Shouldly, Testcontainers (PostgreSQL), Respawn, WebApplicationFactory                                      |
+| Frontend   | Angular 22 (standalone, signals, zoneless), Tailwind CSS v4, Angular CDK, `@microsoft/signalr`, Lucide icons, Vitest |
+| CI/CD      | GitHub Actions; deploys to Nginx + systemd on Ubuntu ([Deployment](Docs/Deployment.md))                              |
+| Planned    | Playwright                                                                                                           |
 
 ## Quick start
 
@@ -52,16 +52,16 @@ Open http://localhost:4200 for the app and http://localhost:5214/scalar for the 
 
 ## Documentation
 
-| Document | What it covers |
-|---|---|
+| Document                                  | What it covers                                                          |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
 | [Getting started](Docs/GettingStarted.md) | prerequisites, configuration, database, running the API and the web app |
-| [Architecture](Docs/Architecture.md) | backend layers, the `Result` pattern, request flow, repository layout |
-| [Data model](Docs/DataModel.md) | entities, ids, paging, soft deletes, file storage, migrations |
-| [Chat rules](Docs/ChatRules.md) | chat types, roles, permissions, visibility |
-| [HTTP API](Docs/HttpApi.md) | routes, tokens, paging, limits, error codes |
-| [Realtime](Docs/Realtime.md) | SignalR hub events, presence, reconnects |
-| [Frontend](Docs/Frontend.md) | the Angular app |
-| [Testing](Docs/Testing.md) | backend and frontend tests |
+| [Architecture](Docs/Architecture.md)      | backend layers, the `Result` pattern, request flow, repository layout   |
+| [Data model](Docs/DataModel.md)           | entities, ids, paging, soft deletes, file storage, migrations           |
+| [Chat rules](Docs/ChatRules.md)           | chat types, roles, permissions, visibility                              |
+| [HTTP API](Docs/HttpApi.md)               | routes, tokens, paging, limits, error codes                             |
+| [Realtime](Docs/Realtime.md)              | SignalR hub events, presence, reconnects                                |
+| [Frontend](Docs/Frontend.md)              | the Angular app                                                         |
+| [Testing](Docs/Testing.md)                | backend and frontend tests                                              |
 
 ## Roadmap
 
@@ -73,4 +73,4 @@ Open http://localhost:4200 for the app and http://localhost:5214/scalar for the 
 
 ## License
 
-[MIT](LICENSE)
+Licensed under the [MIT License](LICENSE.md).

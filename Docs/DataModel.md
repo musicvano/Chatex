@@ -15,15 +15,15 @@ Message 0..1──* Message (replies)
 Message 0..1──* Attachment *──1 User (uploader)
 ```
 
-| Entity | What it holds |
-|---|---|
-| `User` | the ASP.NET Core Identity account: user name (the public @handle, lower case), email, password hash, lockout, `LastSeenAt` |
-| `UserProfile` | what others see: display name, bio, avatar path; one per user, created at registration |
-| `RefreshToken` | a hash of a refresh token (never the token itself), expiry, revocation, the token that replaced it, user agent and IP |
-| `Chat` | a direct chat, group or channel: title, description, avatar, public handle, `LastActivityAt`, soft delete |
-| `ChatMember` | a user in a chat: role, join time, read position (`LastReadMessageId`), muted flag; key `(chat_id, user_id)` |
-| `Message` | body, sender, optional reply, edit time, soft delete |
-| `Attachment` | an uploaded file: original name (display only), media type, size, storage path; linked to a message once sent |
+| Entity         | What it holds                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `User`         | the ASP.NET Core Identity account: user name (the public @handle, lower case), email, password hash, lockout, `LastSeenAt` |
+| `UserProfile`  | what others see: display name, bio, avatar path; one per user, created at registration                                     |
+| `RefreshToken` | a hash of a refresh token (never the token itself), expiry, revocation, the token that replaced it, user agent and IP      |
+| `Chat`         | a direct chat, group or channel: title, description, avatar, public handle, `LastActivityAt`, soft delete                  |
+| `ChatMember`   | a user in a chat: role, join time, read position (`LastReadMessageId`), muted flag; key `(chat_id, user_id)`               |
+| `Message`      | body, sender, optional reply, edit time, soft delete                                                                       |
+| `Attachment`   | an uploaded file: original name (display only), media type, size, storage path; linked to a message once sent              |
 
 ## Design points
 

@@ -2,7 +2,7 @@
 # Activates a Chatex release on the production server.
 #
 # Install once as root (see Docs/Deployment.md):
-#   install -o root -g root -m 755 deploy/activate-release.sh /usr/local/bin/chatex-activate
+#   install -o root -g root -m 755 Deploy/activate-release.sh /usr/local/bin/chatex-activate
 # The deploy user may run only this command through sudo. It must stay root-owned and outside
 # anything the deploy user can write, otherwise sudo on it would grant root.
 #

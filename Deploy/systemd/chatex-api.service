@@ -1,5 +1,5 @@
 # Chatex API (Kestrel on 127.0.0.1:5000, behind Nginx).
-# Install: cp deploy/systemd/chatex-api.service /etc/systemd/system/ && systemctl daemon-reload
+# Install: cp Deploy/systemd/chatex-api.service /etc/systemd/system/ && systemctl daemon-reload
 #          systemctl enable chatex-api
 # Logs:    journalctl -u chatex-api -f
 [Unit]

@@ -8,26 +8,26 @@ On connect the server adds the connection to one group per chat of the user (`ch
 
 ## Server to client
 
-| Event | Arguments | When |
-|---|---|---|
-| `MessageCreated` | `message` | a message was sent |
-| `MessageUpdated` | `message` | a message was edited |
-| `MessageDeleted` | `chatId, messageId` | a message was deleted |
-| `MessagesRead` | `chatId, userId, lastReadMessageId` | a member's read position moved forward (not for channels) |
-| `MembersAdded` | `chatId, userIds[]` | users joined or were added, including everyone in a new chat |
-| `MemberRemoved` | `chatId, userId` | a user left or was removed |
-| `ChatUpdated` | `chatId` | title, description, handle, avatar or roles changed; refetch the chat |
-| `ChatDeleted` | `chatId` | the owner deleted the chat |
-| `Typing` | `chatId, userId` | another member is typing; expire the indicator after about 5 s |
-| `UserOnline` | `userId` | a user who shares a chat with you opened their first connection |
-| `UserOffline` | `userId, lastSeenAt` | that user's last connection closed and they did not return within the grace period |
+| Event            | Arguments                           | When                                                                               |
+| ---------------- | ----------------------------------- | ---------------------------------------------------------------------------------- |
+| `MessageCreated` | `message`                           | a message was sent                                                                 |
+| `MessageUpdated` | `message`                           | a message was edited                                                               |
+| `MessageDeleted` | `chatId, messageId`                 | a message was deleted                                                              |
+| `MessagesRead`   | `chatId, userId, lastReadMessageId` | a member's read position moved forward (not for channels)                          |
+| `MembersAdded`   | `chatId, userIds[]`                 | users joined or were added, including everyone in a new chat                       |
+| `MemberRemoved`  | `chatId, userId`                    | a user left or was removed                                                         |
+| `ChatUpdated`    | `chatId`                            | title, description, handle, avatar or roles changed; refetch the chat              |
+| `ChatDeleted`    | `chatId`                            | the owner deleted the chat                                                         |
+| `Typing`         | `chatId, userId`                    | another member is typing; expire the indicator after about 5 s                     |
+| `UserOnline`     | `userId`                            | a user who shares a chat with you opened their first connection                    |
+| `UserOffline`    | `userId, lastSeenAt`                | that user's last connection closed and they did not return within the grace period |
 
 ## Client to server
 
-| Method | Returns | Notes |
-|---|---|---|
-| `Typing(chatId)` | nothing | throttle to one call every 3 s; fails with a `HubException` if you are not a member |
-| `GetOnlineUsers(userIds[])` | `userIds[]` | which of the given users are online now |
+| Method                      | Returns     | Notes                                                                               |
+| --------------------------- | ----------- | ----------------------------------------------------------------------------------- |
+| `Typing(chatId)`            | nothing     | throttle to one call every 3 s; fails with a `HubException` if you are not a member |
+| `GetOnlineUsers(userIds[])` | `userIds[]` | which of the given users are online now                                             |
 
 ## Presence
 

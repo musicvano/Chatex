@@ -16,7 +16,7 @@ You need:
 - **A droplet with 1–2 GB RAM.** The server only runs the app; builds happen elsewhere.
 - **Only one copy of the API.** Online status is kept in memory.
 
-The server files are in [`deploy/`](../deploy): the systemd unit, the Nginx site, the settings template and the activation script.
+The server files are in [`Deploy/`](../Deploy): the systemd unit, the Nginx site, the settings template and the activation script.
 
 ## Set up the server
 
@@ -55,23 +55,23 @@ sudo -u postgres psql -c "CREATE ROLE chatex LOGIN PASSWORD 'CHANGE_ME'" -c "CRE
 4. Copy the settings template. Then set the database password, your domain as the JWT issuer and audience, and a signing key. You can generate a key with `openssl rand -base64 48`.
 
 ```bash
-cp deploy/chatex.env.example /etc/chatex/chatex.env && chmod 600 /etc/chatex/chatex.env && nano /etc/chatex/chatex.env
+cp Deploy/chatex.env.example /etc/chatex/chatex.env && chmod 600 /etc/chatex/chatex.env && nano /etc/chatex/chatex.env
 ```
 
 5. Install the activation script and the service:
 
 ```bash
-cp deploy/activate-release.sh /usr/local/bin/chatex-activate && chmod 755 /usr/local/bin/chatex-activate
+cp Deploy/activate-release.sh /usr/local/bin/chatex-activate && chmod 755 /usr/local/bin/chatex-activate
 ```
 
 ```bash
-cp deploy/systemd/chatex-api.service /etc/systemd/system/ && systemctl daemon-reload && systemctl enable chatex-api
+cp Deploy/systemd/chatex-api.service /etc/systemd/system/ && systemctl daemon-reload && systemctl enable chatex-api
 ```
 
-6. Set up Nginx and HTTPS. First replace `chat.example.com` in `deploy/nginx/chatex.conf` with your domain.
+6. Set up Nginx and HTTPS. First replace `chat.example.com` in `Deploy/nginx/chatex.conf` with your domain.
 
 ```bash
-cp deploy/nginx/chatex.conf /etc/nginx/sites-available/chatex && ln -s /etc/nginx/sites-available/chatex /etc/nginx/sites-enabled/ && rm -f /etc/nginx/sites-enabled/default
+cp Deploy/nginx/chatex.conf /etc/nginx/sites-available/chatex && ln -s /etc/nginx/sites-available/chatex /etc/nginx/sites-enabled/ && rm -f /etc/nginx/sites-enabled/default
 ```
 
 ```bash
@@ -89,7 +89,7 @@ A release is a folder with four things:
 - `web/` — the Angular build
 - `REVISION` — the commit hash
 
-The release is uploaded to `/opt/chatex/incoming/<commit>`. Then [`chatex-activate <commit>`](../deploy/activate-release.sh) does the rest:
+The release is uploaded to `/opt/chatex/incoming/<commit>`. Then [`chatex-activate <commit>`](../Deploy/activate-release.sh) does the rest:
 
 1. moves the release to `/opt/chatex/releases/<commit>`
 2. applies the migrations

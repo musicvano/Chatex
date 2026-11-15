@@ -18,15 +18,15 @@ dotnet tool restore
 
 Development settings are in `Chatex.Api/appsettings.Development.json`:
 
-| Setting | Purpose |
-|---|---|
-| `ConnectionStrings:Chatex` | PostgreSQL connection string |
-| `Jwt:Issuer`, `Jwt:Audience`, `Jwt:SigningKey` | token settings; the key must be at least 32 characters |
-| `Jwt:AccessTokenLifetime`, `Jwt:RefreshTokenLifetime` | optional; defaults 15 minutes and 30 days |
-| `Storage:RootPath` | folder for uploaded files (default `.uploads` at the repository root, git-ignored) |
-| `Attachments:MaxBytes` | optional upload limit (default 20 MB) |
-| `Attachments:AllowedContentTypes` | optional list of media types that can be uploaded (images, PDF, text, zip and Office documents by default) |
-| `Presence:OfflineGraceSeconds` | optional delay before a disconnected user is reported offline (default 5) |
+| Setting                                               | Purpose                                                                                                    |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `ConnectionStrings:Chatex`                            | PostgreSQL connection string                                                                               |
+| `Jwt:Issuer`, `Jwt:Audience`, `Jwt:SigningKey`        | token settings; the key must be at least 32 characters                                                     |
+| `Jwt:AccessTokenLifetime`, `Jwt:RefreshTokenLifetime` | optional; defaults 15 minutes and 30 days                                                                  |
+| `Storage:RootPath`                                    | folder for uploaded files (default `.uploads` at the repository root, git-ignored)                         |
+| `Attachments:MaxBytes`                                | optional upload limit (default 20 MB)                                                                      |
+| `Attachments:AllowedContentTypes`                     | optional list of media types that can be uploaded (images, PDF, text, zip and Office documents by default) |
+| `Presence:OfflineGraceSeconds`                        | optional delay before a disconnected user is reported offline (default 5)                                  |
 
 The dev signing key in that file is for local use only. In production, settings come from environment variables (for example `Jwt__SigningKey`).
 
