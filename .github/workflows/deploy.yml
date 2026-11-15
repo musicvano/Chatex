@@ -100,11 +100,27 @@ jobs:
           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          host=$(printf '%s' "$SSH_HOST" | tr -d '[:space:]')
+          user=$(printf '%s' "$SSH_USER" | tr -d '[:space:]')
+          # Keep only "<type> <key>" from each line of SSH_KNOWN_HOSTS and pin it to SSH_HOST,
+          # so comments, Windows line endings or a different host name in the secret don't matter.
+          printf '%s\n' "$SSH_KNOWN_HOSTS" | tr -d '\r' \
+            | awk -v host="$host" '!/^[[:space:]]*(#|$)/ {
+                for (i = 1; i < NF; i++) if ($i ~ /^(ssh-|ecdsa-|sk-)/) { print host, $i, $(i + 1); break }
+              }' > ~/.ssh/known_hosts
+          if [ ! -s ~/.ssh/known_hosts ]; then
+            echo "::error::SSH_KNOWN_HOSTS contains no host key lines"
+            exit 1
+          fi
+          # Fingerprints are public; print both sides so a mismatch is visible in the log.
+          echo "Pinned host keys:"
+          ssh-keygen -lf ~/.ssh/known_hosts | awk '{ print "  " $2, $NF }'
+          echo "Keys the server offers:"
+          ssh-keyscan -T 10 "$host" 2>/dev/null | ssh-keygen -lf - | awk '{ print "  " $2, $NF }'
           printf 'Host deploy-target\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  IdentitiesOnly yes\n  StrictHostKeyChecking yes\n' \
-            "$SSH_HOST" "$SSH_USER" > ~/.ssh/config
+            "$host" "$user" > ~/.ssh/config
 
       # Uploads go to incoming/; chatex-activate moves them into releases/.
       - name: Upload release
