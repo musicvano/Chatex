@@ -8,6 +8,8 @@
 
 A web messenger with direct chats, groups and channels. The backend is ASP.NET Core with SignalR and PostgreSQL; the frontend is Angular with Tailwind CSS and works on phones, tablets and desktops.
 
+![Chatex web messenger](Docs/Images/Screenshot.png)
+
 ## Features
 
 - **Accounts**: registration, login by user name or email, account lockout after 5 failed attempts, JWT access tokens with rotating refresh tokens (reusing a refresh token ends every session of that user).
