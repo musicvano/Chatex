@@ -2,7 +2,7 @@
 
 [← Docs index](Index.md)
 
-The web app in `Chatex.Web/` is an Angular 22 workspace styled with Tailwind CSS v4. It covers the whole API: sign-in and registration, the chat list, messaging with history paging, replies, edits, deletes and attachments, groups and channels with members and roles, public chat discovery, profile, password and theme settings.
+The web app in `Source/Chatex.Web/` is an Angular 22 workspace styled with Tailwind CSS v4. It covers the whole API: sign-in and registration, the chat list, messaging with history paging, replies, edits, deletes and attachments, groups and channels with members and roles, public chat discovery, profile, password and theme settings.
 
 Components are standalone with inline templates, state uses signals, change detection is zoneless, and every route is lazy-loaded.
 
@@ -16,7 +16,7 @@ Components are standalone with inline templates, state uses signals, change dete
 ## Source layout
 
 ```
-Chatex.Web/src/app/
+Source/Chatex.Web/src/app/
   core/      api (HttpClient wrappers, DTOs, problem details), auth (service, interceptor, guards),
              realtime (SignalR, presence, typing), media (blob URLs), ui (theme, toasts)
   state/     chats.store, messages.store (signal-based)
@@ -26,10 +26,10 @@ Chatex.Web/src/app/
 
 ## Run
 
-Start the API first (see [Getting started](GettingStarted.md)). The dev server proxies `/api` and `/hubs` to `http://localhost:5214` (`Chatex.Web/proxy.conf.json`), so the refresh cookie stays same-origin.
+Start the API first (see [Getting started](GettingStarted.md)). The dev server proxies `/api` and `/hubs` to `http://localhost:5214` (`Source/Chatex.Web/proxy.conf.json`), so the refresh cookie stays same-origin.
 
 ```bash
-cd Chatex.Web
+cd Source/Chatex.Web
 ```
 
 ```bash
@@ -60,4 +60,4 @@ npm run build
 
 ## Production build
 
-The production build lands in `Chatex.Web/dist/chatex/browser`; serve it with an SPA fallback to `index.html` and proxy `/api` and `/hubs` (with WebSocket upgrade) to the API. [Deployment](Deployment.md) has the Nginx site used in production.
+The production build lands in `Source/Chatex.Web/dist/chatex/browser`; serve it with an SPA fallback to `index.html` and proxy `/api` and `/hubs` (with WebSocket upgrade) to the API. [Deployment](Deployment.md) has the Nginx site used in production.

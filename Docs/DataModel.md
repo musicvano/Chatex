@@ -2,7 +2,7 @@
 
 [← Docs index](Index.md)
 
-The database is PostgreSQL 18, mapped with EF Core 10 and Npgsql. Table and column names are snake_case. Entities live in `Chatex.DataAccess/Entities`, their mappings (lengths, indexes, delete rules) in `Configurations`.
+The database is PostgreSQL 18, mapped with EF Core 10 and Npgsql. Table and column names are snake_case. Entities live in `Source/Chatex.DataAccess/Entities`, their mappings (lengths, indexes, delete rules) in `Configurations`.
 
 ## Entities
 
@@ -45,13 +45,13 @@ Uploaded files are stored on local disk under `Storage:RootPath`, at `{yyyy}/{mm
 After changing an entity or a configuration in `Chatex.DataAccess`, add a migration:
 
 ```bash
-dotnet ef migrations add <Name> --project Chatex.DataAccess --output-dir Migrations
+dotnet ef migrations add <Name> --project Source/Chatex.DataAccess --output-dir Migrations
 ```
 
 To check that the model and the migrations agree:
 
 ```bash
-dotnet ef migrations has-pending-model-changes --project Chatex.DataAccess
+dotnet ef migrations has-pending-model-changes --project Source/Chatex.DataAccess
 ```
 
 `dotnet ef` reads the connection string from the `CHATEX_DB` environment variable (see [Getting started](GettingStarted.md#create-the-database)).

@@ -42,7 +42,7 @@ Tests use xUnit v3 and Shouldly.
 
 ## Frontend
 
-Unit tests run with Vitest through the Angular CLI, from `Chatex.Web/`:
+Unit tests run with Vitest through the Angular CLI, from `Source/Chatex.Web/`:
 
 ```bash
 npm test -- --watch=false

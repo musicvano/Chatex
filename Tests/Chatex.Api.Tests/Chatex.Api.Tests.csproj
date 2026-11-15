@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Chatex.Api\Chatex.Api.csproj" />
+    <ProjectReference Include="..\..\Source\Chatex.Api\Chatex.Api.csproj" />
     <ProjectReference Include="..\Chatex.Testing\Chatex.Testing.csproj" />
   </ItemGroup>
 

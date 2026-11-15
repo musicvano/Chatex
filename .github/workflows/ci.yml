@@ -51,7 +51,7 @@ jobs:
         run: dotnet build Chatex.slnx -c Release --no-restore
 
       - name: Check for model changes without a migration
-        run: dotnet ef migrations has-pending-model-changes --project Chatex.DataAccess --configuration Release --no-build
+        run: dotnet ef migrations has-pending-model-changes --project Source/Chatex.DataAccess --configuration Release --no-build
 
       # Testcontainers starts PostgreSQL in the runner's Docker.
       - name: Test
@@ -71,7 +71,7 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        working-directory: Chatex.Web
+        working-directory: Source/Chatex.Web
     steps:
       - uses: actions/checkout@v7
 
@@ -79,7 +79,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: Chatex.Web/package-lock.json
+          cache-dependency-path: Source/Chatex.Web/package-lock.json
 
       - run: npm ci
       - run: npm run format:check

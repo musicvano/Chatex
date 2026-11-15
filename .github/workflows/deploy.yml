@@ -40,22 +40,22 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: Chatex.Web/package-lock.json
+          cache-dependency-path: Source/Chatex.Web/package-lock.json
 
       - name: Publish API
-        run: dotnet publish Chatex.Api -c Release -r linux-x64 --self-contained false -o release/api
+        run: dotnet publish Source/Chatex.Api -c Release -r linux-x64 --self-contained false -o release/api
 
       - name: Build migration bundle
         run: |
           dotnet tool restore
-          dotnet ef migrations bundle --project Chatex.DataAccess --configuration Release -r linux-x64 -o release/efbundle
+          dotnet ef migrations bundle --project Source/Chatex.DataAccess --configuration Release -r linux-x64 -o release/efbundle
 
       - name: Build web app
-        working-directory: Chatex.Web
+        working-directory: Source/Chatex.Web
         run: |
           npm ci
           npm run build
-          cp -r dist/chatex/browser ../release/web
+          cp -r dist/chatex/browser ../../release/web
 
       - name: Add release metadata
         run: |

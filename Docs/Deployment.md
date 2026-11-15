@@ -131,15 +131,15 @@ Push to `main`, or open **Actions → Deploy → Run workflow**.
 You can also deploy without GitHub Actions. Build the release on your PC, from the repository root. The `release/` folder is git-ignored; delete it first if it already exists.
 
 ```bash
-dotnet publish Chatex.Api -c Release -r linux-x64 --self-contained false -o release/api
+dotnet publish Source/Chatex.Api -c Release -r linux-x64 --self-contained false -o release/api
 ```
 
 ```bash
-dotnet tool restore && dotnet ef migrations bundle --project Chatex.DataAccess -c Release -r linux-x64 -o release/efbundle --force
+dotnet tool restore && dotnet ef migrations bundle --project Source/Chatex.DataAccess -c Release -r linux-x64 -o release/efbundle --force
 ```
 
 ```bash
-npm --prefix Chatex.Web ci && npm --prefix Chatex.Web run build && cp -r Chatex.Web/dist/chatex/browser release/web
+npm --prefix Source/Chatex.Web ci && npm --prefix Source/Chatex.Web run build && cp -r Source/Chatex.Web/dist/chatex/browser release/web
 ```
 
 Then upload and activate it. The release name must be a commit hash, so use the output of `git rev-parse --short HEAD`:

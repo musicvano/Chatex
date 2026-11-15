@@ -21,7 +21,7 @@ Chatex.DataAccess   Data access: EF Core entities, repositories, unit of work, m
 
 ## How a request flows
 
-1. An endpoint in `Chatex.Api/Endpoints` reads the user id from the token and calls one service method.
+1. An endpoint in `Source/Chatex.Api/Endpoints` reads the user id from the token and calls one service method.
 2. The service validates the command with FluentValidation.
 3. It loads the chat and the caller's membership through `ChatAccess`, which applies the visibility rules (see [Chat rules](ChatRules.md)), and checks permissions with `ChatPermissions`.
 4. It changes entities through repositories and saves them with `IUnitOfWork`, inside a transaction when several writes must succeed together. Unique-index violations come back as `UniqueConstraintException` and become `Conflict` errors.
@@ -39,14 +39,16 @@ Chatex.slnx                       solution
 global.json                       SDK pin, Microsoft Testing Platform runner
 Directory.Build.props             shared build settings (nullable, warnings as errors)
 Directory.Packages.props          central NuGet versions
-Chatex.Api/                       web host: Endpoints, Hubs (SignalR, presence), Infrastructure (auth, errors, files), Contracts
-Chatex.Business/                  Auth, Users, Chats, Messages, Attachments, Common
-Chatex.DataAccess/                Entities, Configurations, Repositories, Migrations, Storage
+Source/
+  Chatex.Api/                     web host: Endpoints, Hubs (SignalR, presence), Infrastructure (auth, errors, files), Contracts
+  Chatex.Business/                Auth, Users, Chats, Messages, Attachments, Common
+  Chatex.DataAccess/              Entities, Configurations, Repositories, Migrations, Storage
+  Chatex.Web/                     Angular app (see Frontend.md)
 Tests/
   Chatex.Testing/                 shared PostgreSQL container fixture
   Chatex.DataAccess.Tests/        repository and storage tests
   Chatex.Business.Tests/          service tests through the full DI graph
   Chatex.Api.Tests/               HTTP tests against the real app (WebApplicationFactory)
-Chatex.Web/                       Angular app (see Frontend.md)
+Deploy/                           server files: systemd unit, Nginx site, settings template, activation script
 Docs/                             this documentation
 ```

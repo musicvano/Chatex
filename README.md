@@ -33,19 +33,19 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core, S
 You need the .NET 10 SDK, PostgreSQL 18, Node.js 24 and the `dotnet-ef` tool (`dotnet tool restore`); see [Getting started](Docs/GettingStarted.md) for details and configuration.
 
 ```bash
-dotnet ef database update --project Chatex.DataAccess
+dotnet ef database update --project Source/Chatex.DataAccess
 ```
 
 ```bash
-dotnet run --project Chatex.Api --launch-profile http
+dotnet run --project Source/Chatex.Api --launch-profile http
 ```
 
 ```bash
-npm --prefix Chatex.Web install
+npm --prefix Source/Chatex.Web install
 ```
 
 ```bash
-npm --prefix Chatex.Web start
+npm --prefix Source/Chatex.Web start
 ```
 
 Open http://localhost:4200 for the app and http://localhost:5214/scalar for the API reference.

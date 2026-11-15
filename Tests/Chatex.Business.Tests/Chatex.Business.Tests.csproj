@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Chatex.Business\Chatex.Business.csproj" />
+    <ProjectReference Include="..\..\Source\Chatex.Business\Chatex.Business.csproj" />
     <ProjectReference Include="..\Chatex.Testing\Chatex.Testing.csproj" />
   </ItemGroup>
 

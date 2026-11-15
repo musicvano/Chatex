@@ -1,6 +1,6 @@
 # Chatex web app
 
-Angular 22 + Tailwind CSS v4 frontend for Chatex. See the [Frontend docs](../Docs/Frontend.md) for the architecture and how it talks to the API.
+Angular 22 + Tailwind CSS v4 frontend for Chatex. See the [Frontend docs](../../Docs/Frontend.md) for the architecture and how it talks to the API.
 
 ```bash
 npm install

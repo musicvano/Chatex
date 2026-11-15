@@ -16,7 +16,7 @@ dotnet tool restore
 
 ## Configure
 
-Development settings are in `Chatex.Api/appsettings.Development.json`:
+Development settings are in `Source/Chatex.Api/appsettings.Development.json`:
 
 | Setting                                               | Purpose                                                                                                    |
 | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -35,23 +35,23 @@ The dev signing key in that file is for local use only. In production, settings 
 `dotnet ef` reads the connection string from the `CHATEX_DB` environment variable and otherwise uses `Host=localhost;Database=chatex;Username=postgres;Password=postgres`.
 
 ```bash
-dotnet ef database update --project Chatex.DataAccess
+dotnet ef database update --project Source/Chatex.DataAccess
 ```
 
 ## Run the API
 
 ```bash
-dotnet run --project Chatex.Api --launch-profile http
+dotnet run --project Source/Chatex.Api --launch-profile http
 ```
 
-Then open http://localhost:5214/scalar for the interactive API reference (Development only; the raw document is at `/openapi/v1.json`). [`Chatex.Api.http`](../Chatex.Api/Chatex.Api.http) has sample requests for Rider, Visual Studio or VS Code. `GET /health` answers `200` without a token.
+Then open http://localhost:5214/scalar for the interactive API reference (Development only; the raw document is at `/openapi/v1.json`). [`Chatex.Api.http`](../Source/Chatex.Api/Chatex.Api.http) has sample requests for Rider, Visual Studio or VS Code. `GET /health` answers `200` without a token.
 
 ## Run the frontend
 
-Start the API first. The dev server proxies `/api` and `/hubs` to `http://localhost:5214` (`Chatex.Web/proxy.conf.json`), so the refresh cookie stays same-origin.
+Start the API first. The dev server proxies `/api` and `/hubs` to `http://localhost:5214` (`Source/Chatex.Web/proxy.conf.json`), so the refresh cookie stays same-origin.
 
 ```bash
-cd Chatex.Web
+cd Source/Chatex.Web
 ```
 
 ```bash
