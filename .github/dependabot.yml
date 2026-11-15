@@ -9,6 +9,19 @@ updates:
     groups:
       nuget-minor-and-patch:
         update-types: [minor, patch]
+    # These packages version with .NET itself; their major bumps come with a deliberate upgrade
+    # of the SDK in global.json and the target framework, not one package at a time.
+    ignore:
+      - dependency-name: Microsoft.AspNetCore.*
+        update-types: [version-update:semver-major]
+      - dependency-name: Microsoft.EntityFrameworkCore.*
+        update-types: [version-update:semver-major]
+      - dependency-name: Microsoft.Extensions.*
+        update-types: [version-update:semver-major]
+      - dependency-name: Npgsql.EntityFrameworkCore.PostgreSQL
+        update-types: [version-update:semver-major]
+      - dependency-name: EFCore.NamingConventions
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: npm
     directory: /Source/Chatex.Web
