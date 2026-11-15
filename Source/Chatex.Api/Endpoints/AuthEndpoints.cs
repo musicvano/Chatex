@@ -11,7 +11,7 @@ internal static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/auth").WithTags("Auth");
+        var group = routes.MapGroup("/auth").WithTags("Auth").RequireRateLimiting(RateLimiting.AuthPolicy);
 
         group.MapPost("/register", RegisterAsync).AllowAnonymous().WithName("Register")
             .WithSummary("Creates an account and signs it in.");

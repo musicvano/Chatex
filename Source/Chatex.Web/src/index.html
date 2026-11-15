@@ -8,19 +8,10 @@
     <meta name="description" content="Chatex — team chat and messenger" />
     <meta name="theme-color" content="#4f46e5" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <script>
-      // Apply the saved theme before the first paint so dark mode doesn't flash white.
-      (function () {
-        try {
-          var t = localStorage.getItem('chatex.theme') || 'system';
-          var dark =
-            t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-          document.documentElement.classList.toggle('dark', dark);
-        } catch (e) {}
-      })();
-    </script>
+    <script src="theme-init.js"></script>
   </head>
   <body>
     <app-root></app-root>
+    <noscript>Chatex needs JavaScript. Please enable it in your browser.</noscript>
   </body>
 </html>

@@ -41,15 +41,26 @@ public abstract class ApiTestBase(PostgresFixture fixture) : IAsyncLifetime
     public async ValueTask InitializeAsync()
     {
         await fixture.ResetAsync();
-        _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder => builder
-            .UseEnvironment("Testing")
-            .UseSetting("ConnectionStrings:Chatex", fixture.ConnectionString)
-            .UseSetting("Jwt:Issuer", "chatex-api-tests")
-            .UseSetting("Jwt:Audience", "chatex-api-tests")
-            .UseSetting("Jwt:SigningKey", "api-test-signing-key-that-is-long-enough-for-hmac")
-            .UseSetting("Storage:RootPath", _storageRoot)
-            .UseSetting("Attachments:MaxBytes", MaxAttachmentBytes.ToString())
-            .UseSetting("Presence:OfflineGraceSeconds", "0"));
+        _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
+        {
+            builder
+                .UseEnvironment("Testing")
+                .UseSetting("ConnectionStrings:Chatex", fixture.ConnectionString)
+                .UseSetting("Jwt:Issuer", "chatex-api-tests")
+                .UseSetting("Jwt:Audience", "chatex-api-tests")
+                .UseSetting("Jwt:SigningKey", "api-test-signing-key-that-is-long-enough-for-hmac")
+                .UseSetting("Storage:RootPath", _storageRoot)
+                .UseSetting("Attachments:MaxBytes", MaxAttachmentBytes.ToString())
+                .UseSetting("Presence:OfflineGraceSeconds", "0")
+                // Every test client shares one (unknown) IP, so the auth throttle would trip across tests.
+                .UseSetting("RateLimiting:AuthPermitLimit", "1000000");
+            ConfigureHost(builder);
+        });
+    }
+
+    /// <summary>Overrides settings for one test class; runs after the defaults above.</summary>
+    protected virtual void ConfigureHost(IWebHostBuilder builder)
+    {
     }
 
     public async ValueTask DisposeAsync()

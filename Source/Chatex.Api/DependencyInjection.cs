@@ -6,6 +6,7 @@ using Chatex.Business.Abstractions;
 using Chatex.Business.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -15,13 +16,19 @@ namespace Chatex.Api;
 
 public static class DependencyInjection
 {
+    /// <summary>The request body limit for everything except file uploads.</summary>
+    public const long MaxRequestBodyBytes = 1024 * 1024;
+
     /// <summary>
     /// Registers what the HTTP layer needs on top of <c>AddBusiness</c>: JSON, JWT auth, ProblemDetails, OpenAPI and
     /// the SignalR hub. Call it before <c>AddBusiness</c> so the SignalR <see cref="IChatNotifier"/> wins.
-    /// Reads the optional <c>Presence</c> section.
+    /// Reads the optional <c>Presence</c> and <c>RateLimiting</c> sections.
     /// </summary>
     public static IServiceCollection AddApi(this IServiceCollection services)
     {
+        // JSON bodies are small; the upload endpoints raise this per request (FileUploadExtensions.AcceptsFileUpTo).
+        services.Configure<KestrelServerOptions>(o => o.Limits.MaxRequestBodySize = MaxRequestBodyBytes);
+
         services.ConfigureHttpJsonOptions(o =>
             o.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)));
 
@@ -37,6 +44,7 @@ public static class DependencyInjection
         services.AddSingleton<IChatNotifier, SignalRChatNotifier>();
 
         services.AddProblemDetails();
+        services.AddChatexRateLimiting();
 
         // Malformed bodies answer 400 (turned into problem details by UseStatusCodePages) in every environment,
         // instead of throwing to the exception handler in Development.
