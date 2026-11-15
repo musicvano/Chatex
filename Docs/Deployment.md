@@ -68,7 +68,7 @@ cp Deploy/activate-release.sh /usr/local/bin/chatex-activate && chmod 755 /usr/l
 cp Deploy/systemd/chatex-api.service /etc/systemd/system/ && systemctl daemon-reload && systemctl enable chatex-api
 ```
 
-6. Set up Nginx and HTTPS. First replace `chat.example.com` in `Deploy/nginx/chatex.conf` with your domain. The site includes `chatex-security-headers.conf` (HSTS, Content-Security-Policy and the other security headers), which goes into `/etc/nginx/snippets`.
+6. Set up Nginx and HTTPS. The site is set up for `chatex.mvano.com`; for another domain, change `server_name` in `Deploy/nginx/chatex.conf` and the domain in the commands below. The site includes `chatex-security-headers.conf` (HSTS, Content-Security-Policy and the other security headers), which goes into `/etc/nginx/snippets`.
 
 ```bash
 cp Deploy/nginx/chatex-security-headers.conf /etc/nginx/snippets/
@@ -79,7 +79,7 @@ cp Deploy/nginx/chatex.conf /etc/nginx/sites-available/chatex && ln -s /etc/ngin
 ```
 
 ```bash
-nginx -t && systemctl reload nginx && certbot --nginx -d chat.example.com
+nginx -t && systemctl reload nginx && certbot --nginx -d chatex.mvano.com
 ```
 
 The service starts on the first deploy.
@@ -126,7 +126,7 @@ echo '<contents of chatex-deploy.pub>' >> /root/.ssh/authorized_keys
 | `SSH_USER`        | secret   | `root`                                              |
 | `SSH_PRIVATE_KEY` | secret   | the contents of `chatex-deploy` (the private key)   |
 | `SSH_KNOWN_HOSTS` | secret   | the output of `ssh-keyscan -t ed25519 <droplet ip>` |
-| `PUBLIC_URL`      | variable | `https://chat.example.com`                          |
+| `PUBLIC_URL`      | variable | `https://chatex.mvano.com`                          |
 
 Under **Deployment protection rules** on the same page, turn on **Required reviewers** and add yourself, so every deploy waits for your approval after CI passes.
 
@@ -151,11 +151,11 @@ npm --prefix Source/Chatex.Web ci && npm --prefix Source/Chatex.Web run build &&
 Then upload and activate it. The release name must be a commit hash, so use the output of `git rev-parse --short HEAD`:
 
 ```bash
-scp -r release root@chat.example.com:/opt/chatex/incoming/<commit>
+scp -r release root@chatex.mvano.com:/opt/chatex/incoming/<commit>
 ```
 
 ```bash
-ssh root@chat.example.com chatex-activate <commit>
+ssh root@chatex.mvano.com chatex-activate <commit>
 ```
 
 ## Useful commands
