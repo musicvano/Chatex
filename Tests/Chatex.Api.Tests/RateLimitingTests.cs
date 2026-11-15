@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
@@ -9,7 +10,7 @@ public sealed class RateLimitingTests(PostgresFixture fixture) : ApiTestBase(fix
     private const int Limit = 3;
 
     protected override void ConfigureHost(IWebHostBuilder builder) =>
-        builder.UseSetting("RateLimiting:AuthPermitLimit", Limit.ToString());
+        builder.UseSetting("RateLimiting:AuthPermitLimit", Limit.ToString(CultureInfo.InvariantCulture));
 
     [Fact]
     public async Task Auth_endpoints_answer_429_problem_with_retry_after_once_the_limit_is_used_up()

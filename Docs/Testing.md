@@ -33,10 +33,10 @@ dotnet test --project Tests/Chatex.Api.Tests --filter-method "*Refresh*"
 | `Chatex.Business.Tests`   | services through the full DI graph                                                                                | `BusinessTestBase` |
 | `Chatex.Api.Tests`        | HTTP endpoints and the SignalR hub on the real app                                                                | `ApiTestBase`      |
 
-The tests use a real PostgreSQL, never an in-memory provider or SQLite, because the keyset queries must run on the real database. All tests in an assembly share one database, so parallel runs are turned off in each `xunit.runner.json`.
+The tests use a real PostgreSQL, never an in-memory provider or SQLite, because the keyset queries must run on the real database. All tests in an assembly share one database, so parallel runs are turned off in `Tests/xunit.runner.json`. `Tests/Directory.Build.props` gives every `*.Tests` project that file, the xUnit and Shouldly packages, the `Chatex.Testing` reference and the global usings, so a test csproj lists only what it tests.
 
 - **`BusinessTestBase`** uses a controllable clock (`Time`, a `FakeTimeProvider`), in-memory file storage (`Files`) and a `RecordingNotifier` (`Notifier`) that captures realtime events. Each service call runs in its own DI scope, like separate HTTP requests. `ShouldSucceed()` and `ShouldFail(kind, code)` assert results.
-- **`ApiTestBase`** hosts the app with `WebApplicationFactory` at `https://localhost`, so the `Secure` refresh cookie round-trips. `RegisterAsync` returns a signed-in client; `ConnectHubAsync` opens a SignalR connection and returns once the server has joined the user's chat groups.
+- **`ApiTestBase`** hosts the app with `WebApplicationFactory` at `https://localhost`, so the `Secure` refresh cookie round-trips. `RegisterAsync` returns a signed-in client; `ConnectHubAsync` opens a SignalR connection and returns once the server has joined the user's chat groups. The rate limit is raised and the hourly maintenance job is off; override `ConfigureHost` to change settings for one test class (see `RateLimitingTests`, `HealthTests`).
 
 Tests use xUnit v3 and Shouldly.
 

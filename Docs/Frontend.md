@@ -12,6 +12,7 @@ Components are standalone with inline templates, state uses signals, change dete
 - **Session.** The access token lives only in memory. On startup the app calls `/api/auth/refresh` (the HttpOnly cookie restores the session), refreshes about a minute before expiry, and retries a request once after a 401. Refreshes are single-flight because the server revokes every session when an old refresh token is reused.
 - **Realtime.** One SignalR connection per signed-in tab. Events update the chat list, unread counts, open conversation, typing and presence; after a reconnect the app refetches the chat list and fills the gap with `?after=`. See [Realtime](Realtime.md).
 - **Files.** Avatars and attachments are fetched with `HttpClient` as blobs, because they need the bearer token.
+- **Content-Security-Policy.** Production serves `script-src 'self'` (see `Deploy/nginx/chatex-security-headers.conf`), so there are no inline scripts: the theme is applied before the first paint by `public/theme-init.js`, and critical CSS inlining is off in `angular.json` because its loader is an inline script. Keep new code free of inline scripts and `eval`.
 
 ## Source layout
 

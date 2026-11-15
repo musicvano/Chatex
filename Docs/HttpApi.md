@@ -20,9 +20,11 @@ Who may call which chat and message routes is described in [Chat rules](ChatRule
 ## Conventions
 
 - **Tokens.** Login, register and refresh return the access token in the body and set the refresh token as the `chatex_refresh` cookie (`HttpOnly`, `Secure`, `SameSite=Strict`, path `/api/auth`). Scripts never see it; the browser sends it only to `/api/auth/refresh` and `/api/auth/logout`. Refresh tokens rotate on every use, and reusing an old one ends every session of that user. Five failed logins lock the account for 15 minutes.
-- **Errors** are `application/problem+json`. The `code` field is a stable machine-readable code (see [below](#error-codes)); validation errors also have `errors` keyed by field. Status codes: validation 400, unauthorized 401, forbidden 403, not found 404, conflict 409. Malformed bodies also answer 400.
+- **Errors** are `application/problem+json`. The `code` field is a stable machine-readable code (see [below](#error-codes)); validation errors also have `errors` keyed by field. Status codes: validation 400, unauthorized 401, forbidden 403, not found 404, conflict 409, too many requests 429. Malformed bodies also answer 400.
 - **Enums** are camelCase strings (`"group"`, `"admin"`).
 - **Files.** Avatars and attachments need the access token too, so the frontend loads them with `HttpClient` as blobs instead of plain `<img src>` URLs.
+- **Rate limiting.** Every `/api/auth` route allows 20 requests a minute per client IP (`RateLimiting` settings). Beyond that it answers 429 with `Retry-After` and the code `too_many_requests`.
+- **Health.** `GET /health` needs no token. It answers `200 Healthy` while the database is reachable and `503 Unhealthy` when it is not; the deploy rolls back on 503.
 
 ## Paging
 
@@ -53,39 +55,42 @@ Passing both `before` and `after` is a validation error (`both_cursors`). Messag
 | Display name / bio       | 64 / 500 characters                                                               |
 | Password                 | at least 8 characters with a digit                                                |
 | Search query             | at least 2 characters                                                             |
+| Request body             | 1 MB, except uploads (attachments and avatars have the limits above)              |
+| Sign-in requests         | 20 a minute per client IP on `/api/auth`                                          |
 
 ## Error codes
 
-| Code                                                                                                  | Status | Meaning                                                            |
-| ----------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------ |
-| `validation_failed`                                                                                   | 400    | one or more fields are invalid; see `errors`                       |
-| `invalid_cursor`                                                                                      | 400    | the cursor is not valid                                            |
-| `both_cursors`                                                                                        | 400    | `before` and `after` were both given                               |
-| `query_too_short`                                                                                     | 400    | search needs at least 2 characters                                 |
-| `direct_with_self`                                                                                    | 400    | a direct chat with yourself                                        |
-| `not_for_direct_chats`                                                                                | 400    | the action does not apply to direct chats                          |
-| `unknown_users`                                                                                       | 400    | some of the given users do not exist                               |
-| `invalid_user_count`                                                                                  | 400    | add between 1 and 100 users at a time                              |
-| `invalid_role`                                                                                        | 400    | the role is not available in this chat type                        |
-| `own_role`                                                                                            | 400    | you cannot change your own role                                    |
-| `use_leave`                                                                                           | 400    | remove yourself with `leave` instead                               |
-| `reply_not_found`                                                                                     | 400    | the replied message is not in this chat                            |
-| `invalid_attachments`                                                                                 | 400    | attachments do not exist, are not yours or are already sent        |
-| `attachment_invalid_type`, `attachment_too_large`, `attachment_empty`                                 | 400    | upload rejected                                                    |
-| `avatar_invalid_type`, `avatar_too_large`                                                             | 400    | avatar rejected                                                    |
-| `wrong_password`                                                                                      | 400    | the current password is wrong                                      |
-| `invalid_credentials`                                                                                 | 401    | wrong user name, email or password                                 |
-| `locked_out`                                                                                          | 401    | too many failed attempts                                           |
-| `invalid_refresh_token`                                                                               | 401    | the session has expired; sign in again                             |
-| `not_a_member`                                                                                        | 403    | join the chat first                                                |
-| `not_allowed`                                                                                         | 403    | your role does not allow this                                      |
-| `cannot_post`                                                                                         | 403    | only the owner and admins post in a channel                        |
-| `not_sender`                                                                                          | 403    | only the sender can edit a message                                 |
-| `chat_not_found`                                                                                      | 404    | the chat does not exist, or it is private and you are not a member |
-| `member_not_found`, `message_not_found`, `user_not_found`, `attachment_not_found`, `avatar_not_found` | 404    | the item does not exist                                            |
-| `user_name_taken`, `email_taken`                                                                      | 409    | registration conflict                                              |
-| `handle_taken`                                                                                        | 409    | the public handle is in use                                        |
-| `owner_must_transfer`                                                                                 | 409    | the owner must hand over ownership before leaving                  |
-| `chat_full`                                                                                           | 409    | the group already has 1000 members                                 |
+| Code                                                                                                  | Status | Meaning                                                                       |
+| ----------------------------------------------------------------------------------------------------- | ------ | ----------------------------------------------------------------------------- |
+| `validation_failed`                                                                                   | 400    | one or more fields are invalid; see `errors`                                  |
+| `invalid_cursor`                                                                                      | 400    | the cursor is not valid                                                       |
+| `both_cursors`                                                                                        | 400    | `before` and `after` were both given                                          |
+| `query_too_short`                                                                                     | 400    | search needs at least 2 characters                                            |
+| `direct_with_self`                                                                                    | 400    | a direct chat with yourself                                                   |
+| `not_for_direct_chats`                                                                                | 400    | the action does not apply to direct chats                                     |
+| `unknown_users`                                                                                       | 400    | some of the given users do not exist                                          |
+| `invalid_user_count`                                                                                  | 400    | add between 1 and 100 users at a time                                         |
+| `invalid_role`                                                                                        | 400    | the role is not available in this chat type                                   |
+| `own_role`                                                                                            | 400    | you cannot change your own role                                               |
+| `use_leave`                                                                                           | 400    | remove yourself with `leave` instead                                          |
+| `reply_not_found`                                                                                     | 400    | the replied message is not in this chat                                       |
+| `invalid_attachments`                                                                                 | 400    | attachments do not exist, are not yours or are already sent                   |
+| `attachment_invalid_type`, `attachment_too_large`, `attachment_empty`                                 | 400    | upload rejected                                                               |
+| `avatar_invalid_type`, `avatar_too_large`                                                             | 400    | avatar rejected                                                               |
+| `wrong_password`                                                                                      | 400    | the current password is wrong                                                 |
+| `invalid_credentials`                                                                                 | 401    | wrong user name, email or password                                            |
+| `locked_out`                                                                                          | 401    | too many failed attempts                                                      |
+| `invalid_refresh_token`                                                                               | 401    | the session has expired; sign in again                                        |
+| `not_a_member`                                                                                        | 403    | join the chat first                                                           |
+| `not_allowed`                                                                                         | 403    | your role does not allow this                                                 |
+| `cannot_post`                                                                                         | 403    | only the owner and admins post in a channel                                   |
+| `not_sender`                                                                                          | 403    | only the sender can edit a message                                            |
+| `chat_not_found`                                                                                      | 404    | the chat does not exist, or it is private and you are not a member            |
+| `member_not_found`, `message_not_found`, `user_not_found`, `attachment_not_found`, `avatar_not_found` | 404    | the item does not exist                                                       |
+| `user_name_taken`, `email_taken`                                                                      | 409    | registration conflict                                                         |
+| `handle_taken`                                                                                        | 409    | the public handle is in use                                                   |
+| `owner_must_transfer`                                                                                 | 409    | the owner must hand over ownership before leaving                             |
+| `chat_full`                                                                                           | 409    | the group already has 1000 members                                            |
+| `too_many_requests`                                                                                   | 429    | too many requests to `/api/auth` from this IP; wait for `Retry-After` seconds |
 
-The codes come from the `*Errors` classes in `Chatex.Business`. Add new codes there and to this table.
+The codes come from the `*Errors` classes in `Chatex.Business`, except `too_many_requests`, which the Api's rate limiter sets (`Infrastructure/RateLimiting.cs`). Add new codes there and to this table.

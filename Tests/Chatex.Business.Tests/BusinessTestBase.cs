@@ -1,3 +1,4 @@
+using System.Globalization;
 using Chatex.Business.Abstractions;
 using Chatex.Business.Attachments;
 using Chatex.Business.Auth;
@@ -44,7 +45,7 @@ public abstract class BusinessTestBase(PostgresFixture fixture) : DatabaseTest(f
                 ["Jwt:Issuer"] = Issuer,
                 ["Jwt:Audience"] = Issuer,
                 ["Jwt:SigningKey"] = SigningKey,
-                ["Attachments:MaxBytes"] = MaxAttachmentBytes.ToString(),
+                ["Attachments:MaxBytes"] = MaxAttachmentBytes.ToString(CultureInfo.InvariantCulture),
             })
             .Build();
 

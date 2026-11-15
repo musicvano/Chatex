@@ -52,7 +52,7 @@ mkdir -p /opt/chatex/incoming /opt/chatex/releases /var/lib/chatex/uploads /etc/
 sudo -u postgres psql -c "CREATE ROLE chatex LOGIN PASSWORD 'CHANGE_ME'" -c "CREATE DATABASE chatex OWNER chatex"
 ```
 
-4. Copy the settings template. Then set the database password, your domain as the JWT issuer and audience, and a signing key. You can generate a key with `openssl rand -base64 48`.
+4. Copy the settings template. Then set the database password, your domain as the JWT issuer and audience and in `AllowedHosts` (keep `127.0.0.1` there for the activation health check), and a signing key. You can generate a key with `openssl rand -base64 48`. The template also keeps the Data Protection keys in `/var/lib/chatex/keys`, which the API creates on first start.
 
 ```bash
 cp Deploy/chatex.env.example /etc/chatex/chatex.env && chmod 600 /etc/chatex/chatex.env && nano /etc/chatex/chatex.env
@@ -68,7 +68,11 @@ cp Deploy/activate-release.sh /usr/local/bin/chatex-activate && chmod 755 /usr/l
 cp Deploy/systemd/chatex-api.service /etc/systemd/system/ && systemctl daemon-reload && systemctl enable chatex-api
 ```
 
-6. Set up Nginx and HTTPS. First replace `chat.example.com` in `Deploy/nginx/chatex.conf` with your domain.
+6. Set up Nginx and HTTPS. First replace `chat.example.com` in `Deploy/nginx/chatex.conf` with your domain. The site includes `chatex-security-headers.conf` (HSTS, Content-Security-Policy and the other security headers), which goes into `/etc/nginx/snippets`.
+
+```bash
+cp Deploy/nginx/chatex-security-headers.conf /etc/nginx/snippets/
+```
 
 ```bash
 cp Deploy/nginx/chatex.conf /etc/nginx/sites-available/chatex && ln -s /etc/nginx/sites-available/chatex /etc/nginx/sites-enabled/ && rm -f /etc/nginx/sites-enabled/default
@@ -116,13 +120,15 @@ echo '<contents of chatex-deploy.pub>' >> /root/.ssh/authorized_keys
 
 3. On GitHub, open **Settings → Environments**, create an environment named `production` and add these values to it:
 
-| Name | Kind | Value |
-|---|---|---|
-| `SSH_HOST` | secret | the droplet's IP address |
-| `SSH_USER` | secret | `root` |
-| `SSH_PRIVATE_KEY` | secret | the contents of `chatex-deploy` (the private key) |
-| `SSH_KNOWN_HOSTS` | secret | the output of `ssh-keyscan -t ed25519 <droplet ip>` |
-| `PUBLIC_URL` | variable | `https://chat.example.com` |
+| Name              | Kind     | Value                                               |
+| ----------------- | -------- | --------------------------------------------------- |
+| `SSH_HOST`        | secret   | the droplet's IP address                            |
+| `SSH_USER`        | secret   | `root`                                              |
+| `SSH_PRIVATE_KEY` | secret   | the contents of `chatex-deploy` (the private key)   |
+| `SSH_KNOWN_HOSTS` | secret   | the output of `ssh-keyscan -t ed25519 <droplet ip>` |
+| `PUBLIC_URL`      | variable | `https://chat.example.com`                          |
+
+Under **Deployment protection rules** on the same page, turn on **Required reviewers** and add yourself, so every deploy waits for your approval after CI passes.
 
 Push to `main`, or open **Actions → Deploy → Run workflow**.
 

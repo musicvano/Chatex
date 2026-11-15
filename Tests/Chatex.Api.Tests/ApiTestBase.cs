@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -50,7 +51,7 @@ public abstract class ApiTestBase(PostgresFixture fixture) : IAsyncLifetime
                 .UseSetting("Jwt:Audience", "chatex-api-tests")
                 .UseSetting("Jwt:SigningKey", "api-test-signing-key-that-is-long-enough-for-hmac")
                 .UseSetting("Storage:RootPath", _storageRoot)
-                .UseSetting("Attachments:MaxBytes", MaxAttachmentBytes.ToString())
+                .UseSetting("Attachments:MaxBytes", MaxAttachmentBytes.ToString(CultureInfo.InvariantCulture))
                 .UseSetting("Presence:OfflineGraceSeconds", "0")
                 .UseSetting("Maintenance:Enabled", "false")
                 // Every test client shares one (unknown) IP, so the auth throttle would trip across tests.

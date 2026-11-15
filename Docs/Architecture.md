@@ -30,21 +30,31 @@ Chatex.DataAccess   Data access: EF Core entities, repositories, unit of work, m
 
 ## Service registration
 
-`Program.cs` calls `AddApi()` before `AddBusiness()`. `AddApi` registers the SignalR `IChatNotifier`; `AddBusiness` registers the no-op `NullChatNotifier` only if no notifier exists yet. `AddBusiness` also registers the data access layer and validates the `Jwt`, `Attachments` and `Storage` settings on startup.
+Each layer has a `DependencyInjection` class with one extension method: `AddApi`, `AddBusiness` and `AddDataAccess`. `Program.cs` calls `AddApi()` before `AddBusiness()`. `AddApi` registers the SignalR `IChatNotifier`; `AddBusiness` registers the no-op `NullChatNotifier` only if no notifier exists yet. `AddBusiness` also registers the data access layer and validates the `Jwt`, `Attachments` and `Storage` settings on startup.
+
+## Running in production
+
+- **Health.** `/health` runs `SELECT 1` on a plain connection (`DatabaseHealthCheck` in DataAccess), so it answers 503 within seconds when the database is gone. The deploy uses it to decide on rollback.
+- **Retries.** EF Core retries transient database failures. Explicit transactions go through `IUnitOfWork.ExecuteInTransactionAsync`, which replays the whole lambda on a retry, so everything a transaction saves must be tracked inside that lambda.
+- **Maintenance.** `MaintenanceService` (Api, a hosted service) runs hourly. It deletes uploads that were never sent with a message and refresh tokens that have been expired or revoked for a full token lifetime.
+- **Rate limiting.** `/api/auth` is throttled per client IP (`Infrastructure/RateLimiting.cs`). Behind Nginx the IP comes from `X-Forwarded-For`.
+- **Data Protection** keys are written to `DataProtection:KeysPath` when it is set, so they survive restarts.
 
 ## Repository layout
 
 ```
 Chatex.slnx                       solution
 global.json                       SDK pin, Microsoft Testing Platform runner
-Directory.Build.props             shared build settings (nullable, warnings as errors)
+Directory.Build.props             shared build settings (nullable, analyzers, warnings as errors, NuGet audit)
 Directory.Packages.props          central NuGet versions
+compose.yaml                      local PostgreSQL 18 for development
 Source/
-  Chatex.Api/                     web host: Endpoints, Hubs (SignalR, presence), Infrastructure (auth, errors, files), Contracts
+  Chatex.Api/                     web host: Endpoints, Hubs (SignalR, presence), Infrastructure (auth, errors, files, rate limiting), Maintenance, Contracts
   Chatex.Business/                Auth, Users, Chats, Messages, Attachments, Common
   Chatex.DataAccess/              Entities, Configurations, Repositories, Migrations, Storage
   Chatex.Web/                     Angular app (see Frontend.md)
 Tests/
+  Directory.Build.props           settings shared by the test projects, xunit.runner.json
   Chatex.Testing/                 shared PostgreSQL container fixture
   Chatex.DataAccess.Tests/        repository and storage tests
   Chatex.Business.Tests/          service tests through the full DI graph

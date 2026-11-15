@@ -68,7 +68,7 @@ public sealed class ChatHubTests(PostgresFixture fixture) : ApiTestBase(fixture)
 
         var barrier = await SendAsync(alice, aliceAndEve.Id, "only for eve");
         var eveEvents = await eveHub.ReadUntilAsync("MessageCreated", e => e.Arg<MessageDto>(0).Id == barrier.Id);
-        eveEvents.Where(e => e.Name.StartsWith("Message")).ShouldHaveSingleItem();
+        eveEvents.Where(e => e.Name.StartsWith("Message", StringComparison.Ordinal)).ShouldHaveSingleItem();
     }
 
     [Fact]

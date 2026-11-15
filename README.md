@@ -2,7 +2,7 @@
 
 A web messenger with direct chats, groups and channels, built on ASP.NET Core, SignalR and PostgreSQL, with an Angular and Tailwind CSS frontend that works on phones, tablets and desktops.
 
-> **Status:** the backend (data access, business layer, HTTP API and SignalR hub) and the web frontend are done and tested. Playwright end-to-end tests and CI/CD come next. See [BACKLOG.md](BACKLOG.md) for the full tooling plan.
+> **Status:** the backend (data access, business layer, HTTP API and SignalR hub), the web frontend and CI/CD with production deployment are done and tested. Playwright end-to-end tests come next.
 
 ## Features
 
@@ -12,6 +12,7 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core, S
 - **Messages**: send, reply, edit, delete, read receipts, unread counts, history with cursor (keyset) pagination.
 - **Attachments**: uploads with a size limit and a content-type allow-list, downloads for chat members only.
 - **Realtime** over SignalR: new, edited and deleted messages, read receipts, membership and chat changes, typing indicators, online presence with last seen.
+- **Production**: rate-limited sign-in, a database health check that drives automatic rollback, hourly cleanup of unsent uploads and old refresh tokens, security headers and a Content-Security-Policy in Nginx.
 
 ## Tech stack
 
@@ -30,7 +31,11 @@ A web messenger with direct chats, groups and channels, built on ASP.NET Core, S
 
 ## Quick start
 
-You need the .NET 10 SDK, PostgreSQL 18, Node.js 24 and the `dotnet-ef` tool (`dotnet tool restore`); see [Getting started](Docs/GettingStarted.md) for details and configuration.
+You need the .NET 10 SDK, Docker (or PostgreSQL 18), Node.js 24 and the `dotnet-ef` tool (`dotnet tool restore`); see [Getting started](Docs/GettingStarted.md) for details and configuration.
+
+```bash
+docker compose up -d
+```
 
 ```bash
 dotnet ef database update --project Source/Chatex.DataAccess
@@ -62,14 +67,15 @@ Open http://localhost:4200 for the app and http://localhost:5214/scalar for the 
 | [Realtime](Docs/Realtime.md)              | SignalR hub events, presence, reconnects                                |
 | [Frontend](Docs/Frontend.md)              | the Angular app                                                         |
 | [Testing](Docs/Testing.md)                | backend and frontend tests                                              |
+| [Deployment](Docs/Deployment.md)          | server setup, GitHub Actions deploy, rollback                           |
 
 ## Roadmap
 
 1. ~~Api: Minimal API endpoints, JWT authentication, ProblemDetails mapping for `Result` errors, OpenAPI with Scalar.~~ Done.
 2. ~~SignalR hub: presence, typing indicators, an `IChatNotifier` implementation.~~ Done.
 3. ~~Angular frontend: responsive layouts, every API feature, realtime updates.~~ Done.
-4. Playwright end-to-end tests.
-5. CI/CD with GitHub Actions, deployment to a DigitalOcean droplet.
+4. ~~CI/CD with GitHub Actions, deployment to a DigitalOcean droplet.~~ Done.
+5. Playwright end-to-end tests.
 
 ## License
 

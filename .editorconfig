@@ -403,3 +403,18 @@ dotnet_naming_style.s_camelcase.required_suffix =
 dotnet_naming_style.s_camelcase.word_separator = 
 dotnet_naming_style.s_camelcase.capitalization = camel_case
 
+
+# EF Core migrations are generated; analyzers skip them.
+[Source/Chatex.DataAccess/Migrations/**.cs]
+generated_code = true
+
+# Analyzer rules turned off on purpose (AnalysisLevel latest-recommended in Directory.Build.props).
+[*.cs]
+# CA1716: Error and Result are C#-only types; VB keyword clashes do not matter here.
+dotnet_diagnostic.CA1716.severity = none
+# CA1000: Result<T> exposes static factory members and implicit conversions by design.
+dotnet_diagnostic.CA1000.severity = none
+
+# Test names read as sentences (Login_locks_the_account_after_five_wrong_passwords).
+[Tests/**.cs]
+dotnet_diagnostic.CA1707.severity = none

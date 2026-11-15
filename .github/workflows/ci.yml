@@ -82,6 +82,8 @@ jobs:
           cache-dependency-path: Source/Chatex.Web/package-lock.json
 
       - run: npm ci
+      # Only what ships to browsers; dev tooling advisories are left to Dependabot.
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run format:check
       - run: npm run lint
       - run: npm test -- --watch=false

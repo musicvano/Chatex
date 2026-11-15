@@ -11,7 +11,7 @@ namespace Chatex.Api.Hubs;
 /// Announces that a user went offline, but only after a grace period, so a page reload or a short network drop
 /// does not make them flicker offline and back.
 /// </summary>
-internal sealed class PresenceService(
+internal sealed partial class PresenceService(
     PresenceTracker tracker,
     IHubContext<ChatHub, IChatClient> hub,
     IServiceScopeFactory scopeFactory,
@@ -64,9 +64,12 @@ internal sealed class PresenceService(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to announce that user {UserId} went offline.", userId);
+            LogOfflineFailed(ex, userId);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Failed to announce that user {UserId} went offline.")]
+    private partial void LogOfflineFailed(Exception exception, Guid userId);
 }
 
 internal sealed class PresenceOptions

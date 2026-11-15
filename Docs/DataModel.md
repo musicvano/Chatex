@@ -38,7 +38,7 @@ Message 0..1──* Attachment *──1 User (uploader)
 
 ## Files
 
-Uploaded files are stored on local disk under `Storage:RootPath`, at `{yyyy}/{mm}/{guid}`; the client's file name is never used as a path. An attachment is uploaded first with no message, then linked when the message is sent; a message can only use the sender's own unsent uploads. `IAttachmentService.CleanupStaleAsync` deletes uploads that were never sent, but nothing schedules it yet.
+Uploaded files are stored on local disk under `Storage:RootPath`, at `{yyyy}/{mm}/{guid}`; the client's file name is never used as a path. An attachment is uploaded first with no message, then linked when the message is sent; a message can only use the sender's own unsent uploads. `IAttachmentService.CleanupStaleAsync` deletes uploads that were never sent; the Api's `MaintenanceService` calls it every hour for uploads older than `Maintenance:StaleUploadAge` (24 hours by default).
 
 ## Working on the schema
 
